@@ -1,1 +1,3 @@
 en:
+  site_settings:
+    discourse_visible_rights_enabled: "Enable visible rights for categories."

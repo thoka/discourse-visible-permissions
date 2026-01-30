@@ -17,5 +17,13 @@ end
 require_relative "lib/discourse_visible_rights/engine"
 
 after_initialize do
-  # Code which should run after Rails has finished booting
+  require_relative "app/controllers/discourse_visible_rights/rights_controller"
+  require_relative "app/services/discourse_visible_rights/rights_fetcher"
+
+  Discourse::Application.routes.prepend do
+    get "/c/:category_id/visible-rights" => "discourse_visible_rights/rights#show",
+        :constraints => {
+          format: :json,
+        }
+  end
 end

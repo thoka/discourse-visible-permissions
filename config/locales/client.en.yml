@@ -6,4 +6,6 @@ en:
           discourse_visible_rights: "Discourse Visible Rights"
   js:
     discourse_visible_rights:
-      placeholder: placeholder
+      loading: "Loading category rights..."
+      load_error: "Unable to load category rights."
+      missing_category: "Missing category id for visible rights."
