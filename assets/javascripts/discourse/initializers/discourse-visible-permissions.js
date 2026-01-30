@@ -1,7 +1,7 @@
 import { ajax } from "discourse/lib/ajax";
+import { iconHTML } from "discourse/lib/icon-library";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { i18n } from "discourse-i18n";
-import iconHTML from "discourse-common/lib/icon-helpers";
 
 function renderPermissionsTable(node, data) {
   const table = document.createElement("div");
@@ -96,7 +96,10 @@ export default {
       const siteSettings = api.container.lookup("service:site-settings");
 
       // eslint-disable-next-line no-console
-      console.log("Visible permissions initializer running. Enabled:", siteSettings.discourse_visible_permissions_enabled);
+      console.log(
+        "Visible permissions initializer running. Enabled:",
+        siteSettings.discourse_visible_permissions_enabled
+      );
 
       if (!siteSettings.discourse_visible_permissions_enabled) {
         return;
