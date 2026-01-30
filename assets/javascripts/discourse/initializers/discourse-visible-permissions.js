@@ -1,13 +1,47 @@
 import { ajax } from "discourse/lib/ajax";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { i18n } from "discourse-i18n";
+import iconHTML from "discourse-common/lib/icon-helpers";
 
-function renderRawPermissions(node, data) {
-  const pre = document.createElement("pre");
-  pre.classList.add("discourse-visible-permissions-raw");
-  pre.textContent = JSON.stringify(data, null, 2);
+function renderPermissionsTable(node, data) {
+  const table = document.createElement("div");
+  table.classList.add("category-permissions-table");
+  table.classList.add("discourse-visible-permissions-table");
+
+  const header = document.createElement("div");
+  header.classList.add("permission-row", "row-header");
+  header.innerHTML = `
+    <span class="group-name">${i18n("groups.index.title")}</span>
+    <span class="options">
+      <span class="cell">${iconHTML("far-eye")}</span>
+      <span class="cell">${iconHTML("reply")}</span>
+      <span class="cell">${iconHTML("plus")}</span>
+    </span>
+  `;
+  table.appendChild(header);
+
+  data.group_permissions.forEach((perm) => {
+    const row = document.createElement("div");
+    row.classList.add("permission-row", "row-body");
+
+    const canReply = perm.permission_type <= 2; // full(1) or create_post(2)
+    const canCreate = perm.permission_type === 1; // full(1)
+
+    row.innerHTML = `
+      <span class="group-name">
+        <span class="group-name-label">${perm.group_name}</span>
+      </span>
+      <span class="options">
+        <span class="cell">${iconHTML("check-square")}</span>
+        <span class="cell">${canReply ? iconHTML("check-square") : iconHTML("far-square")}</span>
+        <span class="cell">${canCreate ? iconHTML("check-square") : iconHTML("far-square")}</span>
+      </span>
+    `;
+    table.appendChild(row);
+  });
+
   node.textContent = "";
-  node.appendChild(pre);
+  node.appendChild(table);
 }
 
 async function loadPermissions(node) {
@@ -22,7 +56,7 @@ async function loadPermissions(node) {
 
   try {
     const data = await ajax(`/c/${categoryId}/permissions.json`);
-    renderRawPermissions(node, data);
+    renderPermissionsTable(node, data);
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error("Error loading category permissions:", e);

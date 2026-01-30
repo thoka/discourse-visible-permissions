@@ -1,0 +1,28 @@
+.discourse-visible-permissions-table {
+  border: 1px solid var(--content-border-color);
+  background: var(--secondary);
+  padding: 1em;
+  border-radius: 8px;
+  margin: 1em 0;
+
+  .row-header {
+    border-bottom: 2px solid var(--primary-low);
+    margin-bottom: 0.5em;
+  }
+
+  .permission-row {
+    .options {
+      .cell {
+        color: var(--primary-medium);
+
+        .d-icon-check-square {
+          color: var(--success);
+        }
+      }
+    }
+  }
+
+  // Ensure it looks okay if it's placed inside a p or div
+  display: inline-block;
+  min-width: 300px;
+}

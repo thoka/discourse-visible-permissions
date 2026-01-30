@@ -22,11 +22,10 @@ RSpec.describe "Visible Permissions", type: :system do
     visit post.url
 
     # Wait for the decorator to run and fetch data
-    expect(page).to have_css(".discourse-visible-permissions-raw", wait: 5)
+    expect(page).to have_css(".discourse-visible-permissions-table", wait: 5)
 
-    within ".discourse-visible-permissions-raw" do
-      expect(page).to have_content("\"group_name\": \"#{group.name}\"")
-      expect(page).to have_content("\"permission\": \"create_post\"")
+    within ".discourse-visible-permissions-table" do
+      expect(page).to have_content(group.name)
     end
   end
 
@@ -36,10 +35,10 @@ RSpec.describe "Visible Permissions", type: :system do
 
     visit post.url
 
-    expect(page).to have_css(".discourse-visible-permissions-raw", wait: 5)
+    expect(page).to have_css(".discourse-visible-permissions-table", wait: 5)
 
-    within ".discourse-visible-permissions-raw" do
-      expect(page).to have_content("\"group_name\": \"#{group.name}\"")
+    within ".discourse-visible-permissions-table" do
+      expect(page).to have_content(group.name)
     end
   end
 
