@@ -34,7 +34,7 @@ function showPermissions(
 export function setup(helper) {
   helper.allowList([
     "span.discourse-visible-permissions",
-    "span[data-category]",
+    "span[data-category=*]",
   ]);
 
   helper.registerPlugin((md) => {

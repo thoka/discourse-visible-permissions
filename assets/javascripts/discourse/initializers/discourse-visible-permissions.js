@@ -23,17 +23,31 @@ async function loadPermissions(node) {
   try {
     const data = await ajax(`/c/${categoryId}/permissions.json`);
     renderRawPermissions(node, data);
-  } catch {
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error("Error loading category permissions:", e);
     node.textContent = i18n("discourse_visible_permissions.load_error");
   }
 }
 
-function decorateShowPermissions(elem) {
+function decorateShowPermissions(elem, helper) {
   const nodes = elem.querySelectorAll("span.discourse-visible-permissions");
+
+  let contextCategoryId;
+  if (helper) {
+    const model = helper.getModel();
+    if (model) {
+      contextCategoryId = model.topic?.category_id || model.category_id;
+    }
+  }
 
   nodes.forEach((node) => {
     if (node.dataset.visiblePermissionsLoaded === "true") {
       return;
+    }
+
+    if (!node.dataset.category && contextCategoryId) {
+      node.dataset.category = contextCategoryId;
     }
 
     node.dataset.visiblePermissionsLoaded = "true";
@@ -46,6 +60,9 @@ export default {
   initialize() {
     withPluginApi((api) => {
       const siteSettings = api.container.lookup("service:site-settings");
+
+      // eslint-disable-next-line no-console
+      console.log("Visible permissions initializer running. Enabled:", siteSettings.discourse_visible_permissions_enabled);
 
       if (!siteSettings.discourse_visible_permissions_enabled) {
         return;
