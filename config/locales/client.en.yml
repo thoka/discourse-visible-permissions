@@ -3,9 +3,9 @@ en:
     admin:
       site_settings:
         categories:
-          discourse_visible_rights: "Discourse Visible Rights"
+          discourse_visible_permissions: "Discourse Visible Permissions"
   js:
-    discourse_visible_rights:
-      loading: "Loading category rights..."
-      load_error: "Unable to load category rights."
-      missing_category: "Missing category id for visible rights."
+    discourse_visible_permissions:
+      loading: "Loading category permissions..."
+      load_error: "Unable to load category permissions."
+      missing_category: "Missing category id for visible permissions."

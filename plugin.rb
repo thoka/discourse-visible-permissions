@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# name: discourse-visible-rights
+# name: discourse-visible-permissions
 # about: TODO
 # meta_topic_id: TODO
 # version: 0.0.1
@@ -8,20 +8,20 @@
 # url: TODO
 # required_version: 2.7.0
 
-enabled_site_setting :discourse_visible_rights_enabled
+enabled_site_setting :discourse_visible_permissions_enabled
 
-module ::DiscourseVisibleRights
-  PLUGIN_NAME = "discourse-visible-rights"
+module ::DiscourseVisiblePermissions
+  PLUGIN_NAME = "discourse-visible-permissions"
 end
 
-require_relative "lib/discourse_visible_rights/engine"
+require_relative "lib/discourse_visible_permissions/engine"
 
 after_initialize do
-  require_relative "app/controllers/discourse_visible_rights/rights_controller"
-  require_relative "app/services/discourse_visible_rights/rights_fetcher"
+  require_relative "app/controllers/discourse_visible_permissions/permissions_controller"
+  require_relative "app/services/discourse_visible_permissions/permissions_fetcher"
 
   Discourse::Application.routes.prepend do
-    get "/c/:category_id/visible-rights" => "discourse_visible_rights/rights#show",
+    get "/c/:category_id/permissions" => "discourse_visible_permissions/permissions#show",
         :constraints => {
           format: :json,
         }

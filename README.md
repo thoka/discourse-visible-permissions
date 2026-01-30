@@ -1,28 +1,27 @@
-# **Discourse Visible Rights** Plugin
+# **Discourse Visible Permissions** Plugin
 
 **Plugin Summary**
 
-This plugin enables an infobox about configured rights (who is allowed to create/respond/read in each category).
-
+This plugin enables an infobox about configured permissions (who is allowed to create/respond/read in each category).
 For more information, please see: **TODO: add meta topic URL**
 
 ## Plan
 
 1. **Tests & mocks**
-	- [ ] API tests for the per-category rights endpoint (authenticated users).
-	- [ ] BBCode rendering tests for `[visible-rights category=ID]`.
-	- [ ] Frontend mocks (Pretender) for `/c/:category_id/visible-rights.json`.
+        - [x] API tests for the per-category permissions endpoint (authenticated users).
+        - [x] BBCode rendering tests for `[show-permissions category=ID]`.
+        - [x] Frontend mocks (Pretender) for `/c/:category_id/permissions.json`.
 2. **Build the display**
-	- [ ] Register a custom BBCode that outputs a raw JSON view.
-	- [ ] Render raw data fetched from the per-category endpoint.
+        - [x] Register a custom BBCode that outputs a raw JSON view.
+        - [x] Render raw data fetched from the per-category endpoint.
 3. **Replace mocks with real data**
-	- [ ] Endpoint returns real category rights.
-	- [ ] Frontend consumes the endpoint instead of mocks.
-	- [ ] Update relevant tests to use real data.
+        - [x] Endpoint returns real category permissions.
+        - [x] Frontend consumes the endpoint instead of mocks.
+        - [x] Update relevant tests to use real data.
 
 ## API
 
-- **Endpoint:** `GET /c/:category_id/visible-rights.json`
+- **Endpoint:** `GET /c/:category_id/permissions`
 - **Auth:** logged-in users only; must be able to see the category
 - **Response:**
   ```json
@@ -44,18 +43,16 @@ For more information, please see: **TODO: add meta topic URL**
 Use:
 
 ```
-[visible-rights category=123]
+[show-permissions category=123]
 ```
 
 ## Current Status
 
-- API endpoint implemented for per-category rights (logged-in + can see category).
-- BBCode emits a placeholder element and renders raw JSON from the endpoint.
-- Request spec, PrettyText spec, and Pretender mock added.
+- API endpoint implemented for per-category permissions (logged-in + can see category).
+- BBCode `[show-permissions]` emits a placeholder element and renders data from the endpoint.
 
-## Next Steps
+## Usage
 
-- Rebuild the dev container to resolve current Zeitwerk boot issues before re-running specs.
-- Run plugin specs via `bin/rake plugin:turbo_spec['discourse-visible-rights','--verbose --format=progress --use-runtime-info --profile=50']`.
-- Decide whether raw JSON output is sufficient or replace with the admin-config widget.
-
+Example BBCode:
+`[show-permissions category=5]`
+`[show-permissions category=5 class="custom-class"]`

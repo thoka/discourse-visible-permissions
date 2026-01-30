@@ -1,4 +1,4 @@
-discourse_visible_rights:
-  discourse_visible_rights_enabled:
+discourse_visible_permissions:
+  discourse_visible_permissions_enabled:
     default: false
     client: true

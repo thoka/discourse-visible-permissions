@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module DiscourseVisibleRights
-  class RightsFetcher
+module DiscourseVisiblePermissions
+  class PermissionsFetcher
     include Service::Base
 
     step :build_permissions
