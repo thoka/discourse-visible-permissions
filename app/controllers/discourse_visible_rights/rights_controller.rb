@@ -9,11 +9,9 @@ module DiscourseVisibleRights
       raise Discourse::NotFound unless SiteSetting.discourse_visible_rights_enabled
 
       category = Category.find_by(id: params[:category_id])
-      raise Discourse::NotFound if category.blank?
+      raise Discourse::NotFound if category.blank? || !guardian.can_see?(category)
 
-      guardian.ensure_can_see!(category)
-
-      result = RightsFetcher.call(category:, guardian: guardian)
+      result = RightsFetcher.call(category: category, guardian: guardian)
 
       render json: { category_id: category.id, group_permissions: result.permissions }
     end

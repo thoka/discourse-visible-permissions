@@ -23,6 +23,7 @@ RSpec.describe DiscourseVisibleRights::RightsController do
 
   it "returns group permissions for a visible category" do
     sign_in(user)
+    group.add(user)
 
     get "/c/#{category.id}/visible-rights.json", xhr: true
 

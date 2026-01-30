@@ -4,13 +4,6 @@ module DiscourseVisibleRights
   class RightsFetcher
     include Service::Base
 
-    params do
-      attribute :category
-      attribute :guardian
-
-      validates :category, :guardian, presence: true
-    end
-
     step :build_permissions
 
     private
@@ -40,7 +33,7 @@ module DiscourseVisibleRights
         }
       end
 
-      context.permissions = permissions
+      context[:permissions] = permissions
     end
   end
 end
