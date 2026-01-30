@@ -1,4 +1,4 @@
-# **Plugin Name** Plugin
+# **Discourse Visible Rights** Plugin
 
 **Plugin Summary**
 

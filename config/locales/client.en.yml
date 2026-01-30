@@ -3,7 +3,7 @@ en:
     admin:
       site_settings:
         categories:
-          TODO_plugin_name: "Plugin Name"
+          discourse_visible_rights: "Discourse Visible Rights"
   js:
-    discourse_plugin_name:
+    discourse_visible_rights:
       placeholder: placeholder
