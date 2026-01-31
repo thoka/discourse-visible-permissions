@@ -56,6 +56,28 @@ RSpec.describe "Visible Permissions", type: :system do
     end
   end
 
+  it "renders the short view when requested via BBCode" do
+    post = Fabricate(:post, raw: "[show-permissions category=#{category.id} view=short]")
+
+    visit post.url
+
+    expect(page).to have_css(".view-short", wait: 5)
+    expect(page).to have_css(".discourse-visible-permissions-short-container")
+
+    within ".view-short" do
+      expect(page).to have_content("My group 0")
+    end
+  end
+
+  it "respects the default view site setting" do
+    SiteSetting.discourse_visible_permissions_default_view = "short"
+    post = Fabricate(:post, raw: "[show-permissions category=#{category.id}]")
+
+    visit post.url
+
+    expect(page).to have_css(".view-short", wait: 5)
+  end
+
   it "shows an error if the category is not found or inaccessible" do
     private_group = Fabricate(:group)
     private_category = Fabricate(:private_category, group: private_group) # user not in group
