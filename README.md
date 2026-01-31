@@ -1,51 +1,8 @@
 # **Discourse Visible Permissions** Plugin
 
-**Plugin Summary**
-
-This plugin enables an infobox about configured permissions (who is allowed to create/respond/read in each category).
-For more information, please see: **TODO: add meta topic URL**
-
-## Plan
-
-1. **Tests & mocks**
-        - [x] API tests for the per-category permissions endpoint (authenticated users).
-        - [x] BBCode rendering tests for `[show-permissions category=ID]`.
-        - [x] Frontend mocks (Pretender) for `/c/:category_id/permissions.json`.
-2. **Build the display**
-        - [x] Register a custom BBCode that outputs a raw JSON view.
-        - [x] Render raw data fetched from the per-category endpoint.
-3. **Replace mocks with real data**
-        - [x] Endpoint returns real category permissions.
-        - [x] Frontend consumes the endpoint instead of mocks.
-        - [x] Update relevant tests to use real data.
-
-## API
-
-- **Endpoint:** `GET /c/:category_id/permissions`
-- **Auth:** logged-in users only; must be able to see the category
-- **Response:**
-  ```json
-  {
-    "category_id": 1,
-    "category_name": "General",
-    "group_permissions": [
-      {
-        "permission_type": 1,
-        "permission": "full",
-        "group_name": "admins",
-        "group_display_name": "Admins",
-        "group_id": 1,
-        "can_join": false,
-        "can_request": false,
-        "is_member": false,
-        "group_url": "/g/admins"
-      }
-    ]
-  }
-  ```
+This plugin enables an infobox about configured permissions (who is allowed to create/respond/read) for categories.
 
 ## Features
-
 - **Permission Table**: Displays who can see, reply, and create topics in a category.
 - **Join/Request Action Buttons**:
   - `user-plus` icon: Join groups that allow public admission.
@@ -59,6 +16,8 @@ For more information, please see: **TODO: add meta topic URL**
 Use:
 
 ```
+[show-permissions]
+
 [show-permissions category=123]
 ```
 
@@ -85,3 +44,30 @@ rake discourse_visible_permissions:append_to_categories
 ```
 
 This task will scan all categories and append the tag to the first post of the category's definition topic if it's not already present.
+
+
+## API
+
+- **Endpoint:** `GET /c/:category_id/permissions`
+- **Auth:** logged-in users only; must be able to see the category. If the user is not logged in or doesn't have access, the BBCode tag will be automatically hidden.
+- **Response:**
+  ```json
+  {
+    "category_id": 1,
+    "category_name": "General",
+    "group_permissions": [
+      {
+        "permission_type": 1,
+        "permission": "full",
+        "group_name": "admins",
+        "group_display_name": "Admins",
+        "group_id": 1,
+        "can_join": false,
+        "can_request": false,
+        "is_member": false,
+        "group_url": "/g/admins"
+      }
+    ]
+  }
+  ```
+

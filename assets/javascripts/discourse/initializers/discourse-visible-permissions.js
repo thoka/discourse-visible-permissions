@@ -73,8 +73,13 @@ function renderPermissionsTable(node, data) {
   node.appendChild(wrapper);
 }
 
-async function loadPermissions(node) {
+async function loadPermissions(node, api) {
   const categoryId = node.dataset.category;
+
+  if (!api.getCurrentUser()) {
+    node.style.display = "none";
+    return;
+  }
 
   if (!categoryId) {
     node.textContent = i18n("discourse_visible_permissions.missing_category");
@@ -87,13 +92,17 @@ async function loadPermissions(node) {
     const data = await ajax(`/c/${categoryId}/permissions.json`);
     renderPermissionsTable(node, data);
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error("Error loading category permissions:", e);
-    node.textContent = i18n("discourse_visible_permissions.load_error");
+    if (e.status === 403 || e.status === 404) {
+      node.style.display = "none";
+    } else {
+      // eslint-disable-next-line no-console
+      console.error("Error loading category permissions:", e);
+      node.textContent = i18n("discourse_visible_permissions.load_error");
+    }
   }
 }
 
-function decorateShowPermissions(elem, helper) {
+function decorateShowPermissions(elem, helper, api) {
   const nodes = elem.querySelectorAll("span.discourse-visible-permissions");
 
   let contextCategoryId;
@@ -114,7 +123,7 @@ function decorateShowPermissions(elem, helper) {
     }
 
     node.dataset.visiblePermissionsLoaded = "true";
-    loadPermissions(node);
+    loadPermissions(node, api);
   });
 }
 
@@ -124,19 +133,16 @@ export default {
     withPluginApi((api) => {
       const siteSettings = api.container.lookup("service:site-settings");
 
-      // eslint-disable-next-line no-console
-      console.log(
-        "Visible permissions initializer running. Enabled:",
-        siteSettings.discourse_visible_permissions_enabled
-      );
-
       if (!siteSettings.discourse_visible_permissions_enabled) {
         return;
       }
 
-      api.decorateCookedElement(decorateShowPermissions, {
-        id: "discourse-visible-permissions",
-      });
+      api.decorateCookedElement(
+        (elem, helper) => decorateShowPermissions(elem, helper, api),
+        {
+          id: "discourse-visible-permissions",
+        }
+      );
     });
   },
 };

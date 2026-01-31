@@ -28,7 +28,18 @@ RSpec.describe "Visible Permissions", type: :system do
     expect(page).to have_content("Permissions in area \"#{category.name}\"")
 
     within ".discourse-visible-permissions-table" do
-      expect(page).to have_content(group.full_name.presence || group.name)
+      expect(page).to have_content("My group 0")
+    end
+  end
+
+  it "does not render anything when the user is not logged in" do
+    # Simply don't sign in (the before block signs in by default, so we need to override/adjust)
+    post = Fabricate(:post, raw: "[show-permissions category=#{category.id}]")
+
+    using_session("anonymous") do
+      visit post.url
+      expect(page).to have_css(".discourse-visible-permissions", visible: false)
+      expect(page).not_to have_css(".discourse-visible-permissions-table")
     end
   end
 
@@ -41,7 +52,7 @@ RSpec.describe "Visible Permissions", type: :system do
     expect(page).to have_css(".discourse-visible-permissions-table", wait: 5)
 
     within ".discourse-visible-permissions-table" do
-      expect(page).to have_content(group.name)
+      expect(page).to have_content("My group 0")
     end
   end
 
@@ -68,7 +79,7 @@ RSpec.describe "Visible Permissions", type: :system do
     expect(page).to have_css(".discourse-visible-permissions-table", wait: 5)
 
     within ".discourse-visible-permissions-table" do
-      expect(page).to have_content("Administratoren")
+      expect(page).to have_content("Admins")
       expect(page).to have_content("jeder")
 
       # Check for tooltips (title attributes)

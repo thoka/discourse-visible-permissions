@@ -62,10 +62,7 @@ module DiscourseVisiblePermissions
 
       I18n.t(
         "discourse_visible_permissions.#{group.name}",
-        default: [
-          "groups.default_names.#{group.name}".to_sym,
-          group.name.humanize,
-        ],
+        default: ["groups.default_names.#{group.name}".to_sym, group.name.humanize],
       )
     end
   end
