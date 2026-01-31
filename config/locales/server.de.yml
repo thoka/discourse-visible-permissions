@@ -1,6 +1,7 @@
 de:
   site_settings:
     discourse_visible_permissions_enabled: "Sichtbare Berechtigungen für Kategorien aktivieren."
+    discourse_visible_permissions_default_view: "Standardansicht für den Berechtigungs-Tag."
   discourse_visible_permissions:
     everyone: "jeder"
     logged_in: "angemeldete Benutzer"

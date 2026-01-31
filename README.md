@@ -30,8 +30,14 @@ Use:
 
 Example BBCode:
 - `[show-permissions category=5]`
+- `[show-permissions category=5 view="short"]` (Available views: `table`, `short`)
 - `[show-permissions category=5 class="custom-class"]`
 - `[show-permissions]` (automatically detects the current category when used inside a topic)
+
+## Configuration
+
+You can set the default view for all `[show-permissions]` tags in the site settings:
+- `discourse_visible_permissions_default_view`: Choose between `table` (default) and `short`.
 
 ## Rake Tasks
 

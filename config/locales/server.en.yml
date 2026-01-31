@@ -1,6 +1,7 @@
 en:
   site_settings:
     discourse_visible_permissions_enabled: "Enable visible permissions for categories."
+    discourse_visible_permissions_default_view: "Default view for the permissions tag."
   discourse_visible_permissions:
     everyone: "everyone"
     logged_in: "logged in"

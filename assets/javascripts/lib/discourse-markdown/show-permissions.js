@@ -4,6 +4,7 @@ function addShowPermissions(buffer, state, attributes, applyDataAttributes) {
   let token = new state.Token("span_open", "span", 1);
   token.attrs = [["class", "discourse-visible-permissions"]];
   applyDataAttributes(token, attributes, "category");
+  applyDataAttributes(token, attributes, "view");
   buffer.push(token);
 
   token = new state.Token("text", "", 0);

@@ -65,6 +65,66 @@
   // Ensure it looks okay if it's placed inside a p or div
   display: inline-block;
   min-width: 300px;
+
+  &.view-short {
+    min-width: unset;
+    padding: 0.5em 1em;
+
+    .discourse-visible-permissions-short-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25em;
+
+      .permission-section {
+        display: flex;
+        align-items: center;
+        gap: 0.75em;
+
+        .section-icon {
+          color: var(--primary-medium);
+          width: 1.5em;
+          display: flex;
+          justify-content: center;
+        }
+
+        .section-groups {
+          .group-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25em;
+
+            .group-name-link,
+            .group-name-label {
+              opacity: 0.7;
+              transition: opacity 0.2s ease;
+            }
+
+            &:hover {
+              .group-name-link,
+              .group-name-label {
+                opacity: 1;
+              }
+            }
+
+            .group-action-link {
+              opacity: 0;
+              transition: opacity 0.2s ease;
+              font-size: 0.9em;
+              color: var(--tertiary);
+
+              &:hover {
+                color: var(--tertiary-hover);
+              }
+            }
+
+            &:hover .group-action-link {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 .discourse-visible-permissions-title {

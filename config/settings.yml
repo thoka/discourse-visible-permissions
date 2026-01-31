@@ -2,3 +2,10 @@ discourse_visible_permissions:
   discourse_visible_permissions_enabled:
     default: false
     client: true
+  discourse_visible_permissions_default_view:
+    default: "table"
+    type: enum
+    client: true
+    choices:
+      - table
+      - short

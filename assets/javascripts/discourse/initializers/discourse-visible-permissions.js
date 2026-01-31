@@ -6,6 +6,7 @@ import { i18n } from "discourse-i18n";
 function renderPermissionsTable(node, data) {
   const wrapper = document.createElement("div");
   wrapper.classList.add("discourse-visible-permissions-wrapper");
+  wrapper.classList.add("view-table");
 
   const title = document.createElement("h3");
   title.classList.add("discourse-visible-permissions-title");
@@ -73,8 +74,86 @@ function renderPermissionsTable(node, data) {
   node.appendChild(wrapper);
 }
 
+function renderShortView(node, data) {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("discourse-visible-permissions-wrapper");
+  wrapper.classList.add("view-short");
+
+  const title = document.createElement("h3");
+  title.classList.add("discourse-visible-permissions-title");
+  title.textContent = i18n("discourse_visible_permissions.table_title", {
+    category_name: data.category_name,
+  });
+  wrapper.appendChild(title);
+
+  const container = document.createElement("div");
+  container.classList.add("discourse-visible-permissions-short-container");
+
+  const createGroups = data.group_permissions.filter(
+    (p) => p.permission_type === 1
+  );
+  const replyGroups = data.group_permissions.filter(
+    (p) => p.permission_type === 2
+  );
+  const seeGroups = data.group_permissions.filter(
+    (p) => p.permission_type === 3
+  );
+
+  const renderSection = (icon, groups) => {
+    if (groups.length === 0) {
+      return "";
+    }
+    const groupList = groups
+      .map((p) => {
+        const actionIcons = [];
+        if (p.can_join) {
+          actionIcons.push(
+            `<a href="${
+              p.group_url
+            }" title="${i18n("discourse_visible_permissions.join")}" class="group-action-link join-action">${iconHTML("user-plus")}</a>`
+          );
+        }
+        if (p.can_request) {
+          actionIcons.push(
+            `<a href="${
+              p.group_url
+            }" title="${i18n("discourse_visible_permissions.request")}" class="group-action-link request-action">${iconHTML("paper-plane")}</a>`
+          );
+        }
+
+        const nameContent = p.group_url
+          ? `<a href="${p.group_url}" class="group-name-link">${p.group_display_name}</a>`
+          : `<span class="group-name-label">${p.group_display_name}</span>`;
+
+        return `<span class="group-item">${nameContent}${actionIcons.join(
+          ""
+        )}</span>`;
+      })
+      .join(", ");
+
+    return `
+      <div class="permission-section">
+        <span class="section-icon">${iconHTML(icon)}</span>
+        <span class="section-groups">${groupList}</span>
+      </div>
+    `;
+  };
+
+  container.innerHTML = `
+    ${renderSection("plus", createGroups)}
+    ${renderSection("reply", replyGroups)}
+    ${renderSection("far-eye", seeGroups)}
+  `;
+
+  wrapper.appendChild(container);
+  node.textContent = "";
+  node.appendChild(wrapper);
+}
+
 async function loadPermissions(node, api) {
   const categoryId = node.dataset.category;
+  const view =
+    node.dataset.view || api.container.lookup("service:site-settings").discourse_visible_permissions_default_view;
 
   if (!api.getCurrentUser()) {
     node.style.display = "none";
@@ -90,7 +169,11 @@ async function loadPermissions(node, api) {
 
   try {
     const data = await ajax(`/c/${categoryId}/permissions.json`);
-    renderPermissionsTable(node, data);
+    if (view === "short") {
+      renderShortView(node, data);
+    } else {
+      renderPermissionsTable(node, data);
+    }
   } catch (e) {
     if (e.status === 403 || e.status === 404) {
       node.style.display = "none";
