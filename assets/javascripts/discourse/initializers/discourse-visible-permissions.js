@@ -5,7 +5,7 @@ import { i18n } from "discourse-i18n";
 
 function renderPermissionsTable(node, data) {
   const wrapper = document.createElement("div");
-  wrapper.classList.add("discourse-visible-permissions-wrapper");
+  wrapper.classList.add("discourse-visible-permissions-container");
   wrapper.classList.add("view-table");
 
   const title = document.createElement("h3");
@@ -83,7 +83,7 @@ function renderPermissionsTable(node, data) {
 
 function renderShortView(node, data) {
   const wrapper = document.createElement("div");
-  wrapper.classList.add("discourse-visible-permissions-wrapper");
+  wrapper.classList.add("discourse-visible-permissions-container");
   wrapper.classList.add("view-short");
 
   const title = document.createElement("h3");

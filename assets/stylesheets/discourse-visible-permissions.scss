@@ -1,89 +1,97 @@
-.discourse-visible-permissions-table {
-  border: 1px solid var(--content-border-color);
-  background: var(--secondary);
-  padding: 1em;
-  border-radius: 8px;
-  margin: 1em 0;
-
-  .row-header {
-    border-bottom: 2px solid var(--primary-low);
-    margin-bottom: 0.5em;
-  }
-
-  .permission-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.25em 0;
-    gap: 1em;
-
-    .group-name {
-      font-weight: bold;
-      flex: 1;
-
-      .group-name-link {
-        color: var(--primary);
-        &:hover {
-          color: var(--tertiary);
-          text-decoration: underline;
-        }
-      }
-    }
-
-    .options {
-      display: flex;
-      gap: 0.5em;
-
-      .cell {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        color: var(--primary-medium);
-
-        .d-icon-square-check {
-          color: var(--success);
-        }
-      }
-
-      .actions-cell {
-        display: flex;
-        gap: 0.5em;
-        margin-left: 0.5em;
-        min-width: 30px;
-
-        .group-action-link {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          background-color: var(--primary-low-mid);
-          color: var(--secondary);
-          font-size: 0.8em;
-          transition: background-color 0.2s ease, color 0.2s ease;
-
-          .d-icon {
-            color: currentColor;
-          }
-
-          &:hover {
-            background-color: var(--tertiary);
-            color: var(--secondary);
-          }
-        }
-      }
-    }
-  }
-
-  // Ensure it looks okay if it's placed inside a p or div
+.discourse-visible-permissions-container {
   display: inline-block;
-  min-width: 300px;
+  background: var(--secondary);
+  color: var(--primary);
+
+  &.view-table {
+    border: 1px solid var(--content-border-color);
+    padding: 1em;
+    border-radius: 8px;
+    margin: 1em 0;
+    min-width: 300px;
+
+    .discourse-visible-permissions-table {
+      .row-header {
+        border-bottom: 2px solid var(--primary-low);
+        margin-bottom: 0.5em;
+      }
+
+      .permission-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.25em 0;
+        gap: 1em;
+
+        .group-name {
+          font-weight: bold;
+          flex: 1;
+
+          .group-name-link {
+            color: var(--primary);
+            &:hover {
+              color: var(--tertiary);
+              text-decoration: underline;
+            }
+          }
+        }
+
+        .options {
+          display: flex;
+          gap: 0.5em;
+
+          .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            color: var(--primary-medium);
+
+            .d-icon-square-check {
+              color: var(--success);
+            }
+          }
+
+          .actions-cell {
+            display: flex;
+            gap: 0.5em;
+            margin-left: 0.5em;
+            min-width: 30px;
+
+            .group-action-link {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 16px;
+              height: 16px;
+              border-radius: 50%;
+              background-color: var(--primary-low);
+              color: var(--secondary);
+              font-size: 0.7em;
+              transition: background-color 0.2s ease, opacity 0.2s ease;
+              opacity: 0.6;
+
+              .d-icon {
+                color: currentColor;
+              }
+
+              &:hover {
+                background-color: var(--tertiary);
+                color: var(--secondary);
+                opacity: 1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   &.view-short {
-    min-width: unset;
     padding: 0.5em 1em;
+    border-radius: 8px;
+    margin: 0.5em 0;
+    border: 1px solid transparent;
 
     .discourse-visible-permissions-short-container {
       display: flex;
@@ -126,12 +134,12 @@
               display: inline-flex;
               align-items: center;
               justify-content: center;
-              width: 18px;
-              height: 18px;
+              width: 14px;
+              height: 14px;
               border-radius: 50%;
-              background-color: var(--primary-low-mid);
+              background-color: var(--primary-low);
               color: var(--secondary);
-              font-size: 0.75em;
+              font-size: 0.65em;
               transition: opacity 0.2s ease, background-color 0.2s ease;
 
               .d-icon {
@@ -145,6 +153,10 @@
             }
 
             &:hover .group-action-link {
+              opacity: 0.6;
+            }
+
+            .group-action-link:hover {
               opacity: 1;
             }
           }
