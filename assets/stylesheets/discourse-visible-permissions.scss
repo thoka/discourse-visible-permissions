@@ -1,10 +1,49 @@
+/* Discourse Visible Permissions Styles */
+
 .discourse-visible-permissions-container {
-  display: inline-block;
+  display: inline-block !important;
   background: var(--secondary);
   color: var(--primary);
+  border: 1px solid var(--content-border-color); /* Just to verify it works */
+
+  /* Force all links inside to not be blue */
+  a, a:link, a:visited, a:hover, a:active {
+    color: var(--primary) !important;
+    text-decoration: none !important;
+  }
+
+  a:hover {
+    color: var(--tertiary) !important;
+    text-decoration: underline !important;
+  }
+
+  /* Specific style for action buttons to make them circular and grey */
+  a.group-action-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 50% !important;
+    background-color: var(--primary-low) !important;
+    color: var(--secondary) !important;
+    font-size: 0.7em !important;
+    margin-left: 4px !important;
+    opacity: 0.6 !important;
+    border-bottom: none !important;
+
+    .d-icon {
+      color: currentColor !important;
+    }
+
+    &:hover {
+      background-color: var(--tertiary) !important;
+      color: var(--secondary) !important;
+      opacity: 1 !important;
+    }
+  }
 
   &.view-table {
-    border: 1px solid var(--content-border-color);
     padding: 1em;
     border-radius: 8px;
     margin: 1em 0;
@@ -26,14 +65,6 @@
         .group-name {
           font-weight: bold;
           flex: 1;
-
-          .group-name-link {
-            color: var(--primary);
-            &:hover {
-              color: var(--tertiary);
-              text-decoration: underline;
-            }
-          }
         }
 
         .options {
@@ -57,30 +88,6 @@
             gap: 0.5em;
             margin-left: 0.5em;
             min-width: 30px;
-
-            .group-action-link {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              width: 16px;
-              height: 16px;
-              border-radius: 50%;
-              background-color: var(--primary-low);
-              color: var(--secondary);
-              font-size: 0.7em;
-              transition: background-color 0.2s ease, opacity 0.2s ease;
-              opacity: 0.6;
-
-              .d-icon {
-                color: currentColor;
-              }
-
-              &:hover {
-                background-color: var(--tertiary);
-                color: var(--secondary);
-                opacity: 1;
-              }
-            }
           }
         }
       }
@@ -91,7 +98,6 @@
     padding: 0.5em 1em;
     border-radius: 8px;
     margin: 0.5em 0;
-    border: 1px solid transparent;
 
     .discourse-visible-permissions-short-container {
       display: flex;
@@ -119,7 +125,6 @@
             .group-name-link,
             .group-name-label {
               opacity: 0.7;
-              transition: opacity 0.2s ease;
             }
 
             &:hover {
@@ -127,37 +132,18 @@
               .group-name-label {
                 opacity: 1;
               }
+
+              .group-action-link {
+                opacity: 0.6 !important;
+              }
             }
 
             .group-action-link {
-              opacity: 0;
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-              width: 14px;
-              height: 14px;
-              border-radius: 50%;
-              background-color: var(--primary-low);
-              color: var(--secondary);
-              font-size: 0.65em;
-              transition: opacity 0.2s ease, background-color 0.2s ease;
-
-              .d-icon {
-                color: currentColor;
-              }
-
+              opacity: 0 !important; /* Hidden until group-item hover */
+              
               &:hover {
-                background-color: var(--tertiary);
-                color: var(--secondary);
+                opacity: 1 !important;
               }
-            }
-
-            &:hover .group-action-link {
-              opacity: 0.6;
-            }
-
-            .group-action-link:hover {
-              opacity: 1;
             }
           }
         }
@@ -169,4 +155,5 @@
 .discourse-visible-permissions-title {
   margin-bottom: 0.5rem;
   font-size: var(--font-up-1);
+  font-weight: bold;
 }
