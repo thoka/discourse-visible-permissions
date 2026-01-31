@@ -10,7 +10,7 @@
 
 enabled_site_setting :discourse_visible_permissions_enabled
 
-register_svg_icon "check-square"
+register_svg_icon "square-check"
 register_svg_icon "far-square"
 register_svg_icon "far-eye"
 

@@ -15,7 +15,7 @@
       .cell {
         color: var(--primary-medium);
 
-        .d-icon-check-square {
+        .d-icon-square-check {
           color: var(--success);
         }
       }
@@ -25,4 +25,9 @@
   // Ensure it looks okay if it's placed inside a p or div
   display: inline-block;
   min-width: 300px;
+}
+
+.discourse-visible-permissions-title {
+  margin-bottom: 0.5rem;
+  font-size: var(--font-up-1);
 }

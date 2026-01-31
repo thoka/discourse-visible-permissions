@@ -1,0 +1,12 @@
+de:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_visible_permissions: "Discourse Visible Permissions"
+  js:
+    discourse_visible_permissions:
+      loading: "Lade Kategorie-Berechtigungen..."
+      load_error: "Kategorie-Berechtigungen konnten nicht geladen werden."
+      missing_category: "Fehlende Kategorie-ID für sichtbare Berechtigungen."
+      table_title: "Berechtigungen im Bereich „%{category_name}“"

@@ -9,3 +9,4 @@ en:
       loading: "Loading category permissions..."
       load_error: "Unable to load category permissions."
       missing_category: "Missing category id for visible permissions."
+      table_title: "Permissions in area \"%{category_name}\""

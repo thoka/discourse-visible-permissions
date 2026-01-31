@@ -4,6 +4,16 @@ import { withPluginApi } from "discourse/lib/plugin-api";
 import { i18n } from "discourse-i18n";
 
 function renderPermissionsTable(node, data) {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("discourse-visible-permissions-wrapper");
+
+  const title = document.createElement("h3");
+  title.classList.add("discourse-visible-permissions-title");
+  title.textContent = i18n("discourse_visible_permissions.table_title", {
+    category_name: data.category_name,
+  });
+  wrapper.appendChild(title);
+
   const table = document.createElement("div");
   table.classList.add("category-permissions-table");
   table.classList.add("discourse-visible-permissions-table");
@@ -13,9 +23,9 @@ function renderPermissionsTable(node, data) {
   header.innerHTML = `
     <span class="group-name">${i18n("groups.index.title")}</span>
     <span class="options">
-      <span class="cell">${iconHTML("far-eye")}</span>
-      <span class="cell">${iconHTML("reply")}</span>
-      <span class="cell">${iconHTML("plus")}</span>
+      <span class="cell" title="${i18n("category.permissions.see")}">${iconHTML("far-eye")}</span>
+      <span class="cell" title="${i18n("category.permissions.reply")}">${iconHTML("reply")}</span>
+      <span class="cell" title="${i18n("category.permissions.create")}">${iconHTML("plus")}</span>
     </span>
   `;
   table.appendChild(header);
@@ -29,19 +39,20 @@ function renderPermissionsTable(node, data) {
 
     row.innerHTML = `
       <span class="group-name">
-        <span class="group-name-label">${perm.group_name}</span>
+        <span class="group-name-label">${perm.group_display_name}</span>
       </span>
       <span class="options">
-        <span class="cell">${iconHTML("check-square")}</span>
-        <span class="cell">${canReply ? iconHTML("check-square") : iconHTML("far-square")}</span>
-        <span class="cell">${canCreate ? iconHTML("check-square") : iconHTML("far-square")}</span>
+        <span class="cell" title="${i18n("category.permissions.see")}">${iconHTML("square-check")}</span>
+        <span class="cell" title="${i18n("category.permissions.reply")}">${canReply ? iconHTML("square-check") : iconHTML("far-square")}</span>
+        <span class="cell" title="${i18n("category.permissions.create")}">${canCreate ? iconHTML("square-check") : iconHTML("far-square")}</span>
       </span>
     `;
     table.appendChild(row);
   });
 
+  wrapper.appendChild(table);
   node.textContent = "";
-  node.appendChild(table);
+  node.appendChild(wrapper);
 }
 
 async function loadPermissions(node) {

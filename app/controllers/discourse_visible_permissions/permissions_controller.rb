@@ -13,7 +13,11 @@ module DiscourseVisiblePermissions
 
       result = PermissionsFetcher.call(category: category, guardian: guardian)
 
-      render json: { category_id: category.id, group_permissions: result.permissions }
+      render json: {
+               category_id: category.id,
+               category_name: category.name,
+               group_permissions: result.permissions,
+             }
     end
   end
 end
