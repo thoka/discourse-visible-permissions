@@ -4,10 +4,11 @@ This plugin enables an infobox about configured permissions (who is allowed to c
 
 ## Features
 - **Permission Table**: Displays who can see, reply, and create topics in a category.
+- **Compact View (`short`)**: A streamlined display grouping groups by permission level with icons.
 - **Join/Request Action Buttons**:
   - `user-plus` icon: Join groups that allow public admission.
   - `paper-plane` icon: Request membership for groups that allow it.
-- **Interactive Links**: Group names link directly to their respective group pages.
+- **Interactive Links**: Group names link to group pages, and the category name in the title links to the category page.
 - **Localization**: Full support for German and English, including localized automatic group names (e.g., "jeder", "Team").
 - **Automatic Detection**: Using `[show-permissions]` without a category ID inside a topic automatically detects the category from the topic.
 

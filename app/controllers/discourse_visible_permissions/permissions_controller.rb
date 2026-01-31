@@ -16,6 +16,7 @@ module DiscourseVisiblePermissions
       render json: {
                category_id: category.id,
                category_name: category.name,
+               category_url: category.url,
                group_permissions: result.permissions,
              }
     end

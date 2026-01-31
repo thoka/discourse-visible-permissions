@@ -10,9 +10,16 @@ function renderPermissionsTable(node, data) {
 
   const title = document.createElement("h3");
   title.classList.add("discourse-visible-permissions-title");
-  title.textContent = i18n("discourse_visible_permissions.table_title", {
-    category_name: data.category_name,
-  });
+
+  if (data.category_url) {
+    title.innerHTML = i18n("discourse_visible_permissions.table_title", {
+      category_name: `<a href="${data.category_url}" class="category-name-link">${data.category_name}</a>`,
+    });
+  } else {
+    title.textContent = i18n("discourse_visible_permissions.table_title", {
+      category_name: data.category_name,
+    });
+  }
   wrapper.appendChild(title);
 
   const table = document.createElement("div");
@@ -81,9 +88,16 @@ function renderShortView(node, data) {
 
   const title = document.createElement("h3");
   title.classList.add("discourse-visible-permissions-title");
-  title.textContent = i18n("discourse_visible_permissions.table_title", {
-    category_name: data.category_name,
-  });
+
+  if (data.category_url) {
+    title.innerHTML = i18n("discourse_visible_permissions.table_title", {
+      category_name: `<a href="${data.category_url}" class="category-name-link">${data.category_name}</a>`,
+    });
+  } else {
+    title.textContent = i18n("discourse_visible_permissions.table_title", {
+      category_name: data.category_name,
+    });
+  }
   wrapper.appendChild(title);
 
   const container = document.createElement("div");
