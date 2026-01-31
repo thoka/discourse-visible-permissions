@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
 # name: discourse-visible-permissions
-# about: TODO
+# about: display category group permissions to users via a bbcode tag
 # meta_topic_id: TODO
 # version: 0.0.1
-# authors: Discourse
-# url: TODO
+# authors: gemini-3-flash-preview prompted by Thomas Kalka
+# url: https://github.com/thoka/discourse-visible-permissions
 # required_version: 2.7.0
 
 enabled_site_setting :discourse_visible_permissions_enabled
+
+register_asset "stylesheets/discourse-visible-permissions.scss"
 
 register_svg_icon "square-check"
 register_svg_icon "far-square"
