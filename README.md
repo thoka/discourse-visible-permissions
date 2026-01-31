@@ -39,6 +39,7 @@ Example BBCode:
 
 You can set the default view for all `[show-permissions]` tags in the site settings:
 - `discourse_visible_permissions_default_view`: Choose between `table` (default) and `short`.
+- `discourse_visible_permissions_min_trust_level`: Minimum trust level required to see the tag (default: 0).
 
 ## Rake Tasks
 
@@ -56,7 +57,10 @@ This task will scan all categories and append the tag to the first post of the c
 ## API
 
 - **Endpoint:** `GET /c/:category_id/permissions`
-- **Auth:** logged-in users only; must be able to see the category. If the user is not logged in or doesn't have access, the BBCode tag will be automatically hidden.
+- **Auth:** logged-in users only.
+  - The user must meet the `discourse_visible_permissions_min_trust_level`.
+  - The user must be able to see the category **OR** there must be at least one group associated with the category that the user can join or request membership for.
+  - If these conditions are not met, the tag will be automatically hidden in the frontend.
 - **Response:**
   ```json
   {

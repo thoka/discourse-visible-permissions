@@ -64,12 +64,40 @@ RSpec.describe DiscourseVisiblePermissions::PermissionsController do
     )
   end
 
-  it "returns not found when category is not visible" do
+  it "returns not found when category is not visible and no joinable group exists" do
     sign_in(user)
+    group.update!(public_admission: false, allow_membership_requests: false)
 
     get "/c/#{private_category.id}/permissions", xhr: true
 
     expect(response.status).to eq(404)
+  end
+
+  it "returns permissions when category is not visible but a group is joinable" do
+    sign_in(user)
+    group.update!(public_admission: true)
+
+    get "/c/#{private_category.id}/permissions", xhr: true
+
+    expect(response.status).to eq(200)
+    json = response.parsed_body
+    expect(json["category_id"]).to eq(private_category.id)
+    expect(json["group_permissions"]).not_to be_empty
+  end
+
+  it "respects the min_trust_level setting" do
+    SiteSetting.discourse_visible_permissions_min_trust_level = 1
+    user.update!(trust_level: 0)
+    group.add(user)
+    sign_in(user)
+
+    get "/c/#{category.id}/permissions", xhr: true
+
+    expect(response.status).to eq(403)
+
+    user.update!(trust_level: 1)
+    get "/c/#{category.id}/permissions", xhr: true
+    expect(response.status).to eq(200)
   end
 
   it "returns localized group names" do

@@ -9,3 +9,6 @@ discourse_visible_permissions:
     choices:
       - table
       - short
+  discourse_visible_permissions_min_trust_level:
+    default: 0
+    client: true
