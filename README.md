@@ -54,5 +54,18 @@ Use:
 ## Usage
 
 Example BBCode:
-`[show-permissions category=5]`
-`[show-permissions category=5 class="custom-class"]`
+- `[show-permissions category=5]`
+- `[show-permissions category=5 class="custom-class"]`
+- `[show-permissions]` (automatically detects the current category when used inside a topic)
+
+## Rake Tasks
+
+### Append tag to all category descriptions
+
+To automatically add the `[show-permissions]` tag to all existing category description topics (the "About the... category" topics), you can run:
+
+```bash
+rake discourse_visible_permissions:append_to_categories
+```
+
+This task will scan all categories and append the tag to the first post of the category's definition topic if it's not already present.
