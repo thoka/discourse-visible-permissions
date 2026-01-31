@@ -1,3 +1,14 @@
 en:
   site_settings:
     discourse_visible_permissions_enabled: "Enable visible permissions for categories."
+  discourse_visible_permissions:
+    everyone: "everyone"
+    logged_in: "logged in"
+    admins: "admins"
+    moderators: "moderators"
+    staff: "staff"
+    trust_level_0: "trust level 0"
+    trust_level_1: "trust level 1"
+    trust_level_2: "trust level 2"
+    trust_level_3: "trust level 3"
+    trust_level_4: "trust level 4"

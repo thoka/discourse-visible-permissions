@@ -7,7 +7,8 @@ describe "discourse_visible_permissions rake tasks" do
   fab!(:admin) { Fabricate(:admin) }
 
   before do
-    Rake.application.rake_require "tasks/permissions", ["#{Rails.root}/plugins/discourse-visible-permissions/lib"]
+    Rake.application.rake_require "tasks/permissions",
+                                  ["#{Rails.root}/plugins/discourse-visible-permissions/lib"]
     Rake::Task.define_task(:environment)
   end
 
@@ -30,7 +31,7 @@ describe "discourse_visible_permissions rake tasks" do
       post = category.topic.first_post
       original_raw = "This is a description with [show-permissions] tag already."
       post.update!(raw: original_raw)
-      
+
       rake_task.invoke
       rake_task.reenable
 

@@ -13,6 +13,8 @@ enabled_site_setting :discourse_visible_permissions_enabled
 register_svg_icon "square-check"
 register_svg_icon "far-square"
 register_svg_icon "far-eye"
+register_svg_icon "user-plus"
+register_svg_icon "paper-plane"
 
 module ::DiscourseVisiblePermissions
   PLUGIN_NAME = "discourse-visible-permissions"

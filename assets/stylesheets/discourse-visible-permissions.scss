@@ -11,12 +11,52 @@
   }
 
   .permission-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25em 0;
+    gap: 1em;
+
+    .group-name {
+      font-weight: bold;
+      flex: 1;
+
+      .group-name-link {
+        color: var(--primary);
+        &:hover {
+          color: var(--tertiary);
+          text-decoration: underline;
+        }
+      }
+    }
+
     .options {
+      display: flex;
+      gap: 0.5em;
+
       .cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
         color: var(--primary-medium);
 
         .d-icon-square-check {
           color: var(--success);
+        }
+      }
+
+      .actions-cell {
+        display: flex;
+        gap: 0.5em;
+        margin-left: 0.5em;
+        min-width: 30px;
+
+        .group-action-link {
+          color: var(--tertiary);
+          &:hover {
+            color: var(--tertiary-hover);
+          }
         }
       }
     }

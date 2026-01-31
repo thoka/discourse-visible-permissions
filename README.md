@@ -27,16 +27,32 @@ For more information, please see: **TODO: add meta topic URL**
   ```json
   {
     "category_id": 1,
+    "category_name": "General",
     "group_permissions": [
       {
-        "permission_type": 2,
-        "permission": "create_post",
-        "group_name": "staff",
-        "group_id": 3
+        "permission_type": 1,
+        "permission": "full",
+        "group_name": "admins",
+        "group_display_name": "Admins",
+        "group_id": 1,
+        "can_join": false,
+        "can_request": false,
+        "is_member": false,
+        "group_url": "/g/admins"
       }
     ]
   }
   ```
+
+## Features
+
+- **Permission Table**: Displays who can see, reply, and create topics in a category.
+- **Join/Request Action Buttons**:
+  - `user-plus` icon: Join groups that allow public admission.
+  - `paper-plane` icon: Request membership for groups that allow it.
+- **Interactive Links**: Group names link directly to their respective group pages.
+- **Localization**: Full support for German and English, including localized automatic group names (e.g., "jeder", "Team").
+- **Automatic Detection**: Using `[show-permissions]` without a category ID inside a topic automatically detects the category from the topic.
 
 ## BBCode
 

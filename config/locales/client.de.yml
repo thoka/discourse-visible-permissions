@@ -10,3 +10,5 @@ de:
       load_error: "Kategorie-Berechtigungen konnten nicht geladen werden."
       missing_category: "Fehlende Kategorie-ID für sichtbare Berechtigungen."
       table_title: "Berechtigungen im Bereich „%{category_name}“"
+      join: "Gruppe beitreten"
+      request: "Mitgliedschaft anfragen"

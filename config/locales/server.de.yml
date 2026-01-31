@@ -1,3 +1,14 @@
 de:
   site_settings:
     discourse_visible_permissions_enabled: "Sichtbare Berechtigungen für Kategorien aktivieren."
+  discourse_visible_permissions:
+    everyone: "jeder"
+    logged_in: "angemeldete Benutzer"
+    admins: "Admins"
+    moderators: "Moderatoren"
+    staff: "Team"
+    trust_level_0: "Vertrauensstufe 0"
+    trust_level_1: "Vertrauensstufe 1"
+    trust_level_2: "Vertrauensstufe 2"
+    trust_level_3: "Vertrauensstufe 3"
+    trust_level_4: "Vertrauensstufe 4"

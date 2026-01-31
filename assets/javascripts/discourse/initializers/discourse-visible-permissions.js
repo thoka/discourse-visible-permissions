@@ -26,6 +26,7 @@ function renderPermissionsTable(node, data) {
       <span class="cell" title="${i18n("category.permissions.see")}">${iconHTML("far-eye")}</span>
       <span class="cell" title="${i18n("category.permissions.reply")}">${iconHTML("reply")}</span>
       <span class="cell" title="${i18n("category.permissions.create")}">${iconHTML("plus")}</span>
+      <span class="cell actions-cell"></span>
     </span>
   `;
   table.appendChild(header);
@@ -37,14 +38,31 @@ function renderPermissionsTable(node, data) {
     const canReply = perm.permission_type <= 2; // full(1) or create_post(2)
     const canCreate = perm.permission_type === 1; // full(1)
 
+    const actionIcons = [];
+    if (perm.can_join) {
+      actionIcons.push(
+        `<a href="${perm.group_url}" title="${i18n("discourse_visible_permissions.join")}" class="group-action-link join-action">${iconHTML("user-plus")}</a>`
+      );
+    }
+    if (perm.can_request) {
+      actionIcons.push(
+        `<a href="${perm.group_url}" title="${i18n("discourse_visible_permissions.request")}" class="group-action-link request-action">${iconHTML("paper-plane")}</a>`
+      );
+    }
+
     row.innerHTML = `
       <span class="group-name">
-        <span class="group-name-label">${perm.group_display_name}</span>
+        ${
+          perm.group_url
+            ? `<a href="${perm.group_url}" class="group-name-link">${perm.group_display_name}</a>`
+            : `<span class="group-name-label">${perm.group_display_name}</span>`
+        }
       </span>
       <span class="options">
         <span class="cell" title="${i18n("category.permissions.see")}">${iconHTML("square-check")}</span>
         <span class="cell" title="${i18n("category.permissions.reply")}">${canReply ? iconHTML("square-check") : iconHTML("far-square")}</span>
         <span class="cell" title="${i18n("category.permissions.create")}">${canCreate ? iconHTML("square-check") : iconHTML("far-square")}</span>
+        <span class="cell actions-cell">${actionIcons.join("")}</span>
       </span>
     `;
     table.appendChild(row);

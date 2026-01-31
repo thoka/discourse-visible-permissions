@@ -72,9 +72,15 @@ RSpec.describe "Visible Permissions", type: :system do
       expect(page).to have_content("jeder")
 
       # Check for tooltips (title attributes)
-      expect(page).to have_css(".cell[title='#{I18n.t("js.category.permissions.see", locale: :de)}']")
-      expect(page).to have_css(".cell[title='#{I18n.t("js.category.permissions.reply", locale: :de)}']")
-      expect(page).to have_css(".cell[title='#{I18n.t("js.category.permissions.create", locale: :de)}']")
+      expect(page).to have_css(
+        ".cell[title='#{I18n.t("js.category.permissions.see", locale: :de)}']",
+      )
+      expect(page).to have_css(
+        ".cell[title='#{I18n.t("js.category.permissions.reply", locale: :de)}']",
+      )
+      expect(page).to have_css(
+        ".cell[title='#{I18n.t("js.category.permissions.create", locale: :de)}']",
+      )
     end
   end
 end

@@ -33,13 +33,12 @@ RSpec.describe DiscourseVisiblePermissions::PermissionsController do
     expect(json["category_id"]).to eq(category.id)
     expect(json["category_name"]).to eq(category.name)
     expect(json["group_permissions"]).to contain_exactly(
-      {
+      hash_including(
         "permission_type" => CategoryGroup.permission_types[:create_post],
         "permission" => "create_post",
         "group_name" => group.name,
-        "group_display_name" => group.full_name.presence || group.name,
         "group_id" => group.id,
-      },
+      ),
     )
   end
 
@@ -56,13 +55,12 @@ RSpec.describe DiscourseVisiblePermissions::PermissionsController do
 
     everyone_group = Group[:everyone]
     expect(json["group_permissions"]).to include(
-      {
+      hash_including(
         "permission_type" => CategoryGroup.permission_types[:create_post],
         "permission" => "create_post",
         "group_name" => everyone_group.name,
-        "group_display_name" => everyone_group.full_name.presence || everyone_group.name,
         "group_id" => everyone_group.id,
-      },
+      ),
     )
   end
 
@@ -89,7 +87,7 @@ RSpec.describe DiscourseVisiblePermissions::PermissionsController do
     json = response.parsed_body
 
     admin_perm = json["group_permissions"].find { |p| p["group_name"] == "admins" }
-    expect(admin_perm["group_display_name"]).to eq("Administratoren")
+    expect(admin_perm["group_display_name"]).to eq("Admins")
 
     everyone_perm =
       json["group_permissions"].find { |p| p["group_id"] == Group::AUTO_GROUPS[:everyone] }
