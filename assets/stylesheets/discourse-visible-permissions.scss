@@ -53,9 +53,24 @@
         min-width: 30px;
 
         .group-action-link {
-          color: var(--tertiary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background-color: var(--primary-low-mid);
+          color: var(--secondary);
+          font-size: 0.8em;
+          transition: background-color 0.2s ease, color 0.2s ease;
+
+          .d-icon {
+            color: currentColor;
+          }
+
           &:hover {
-            color: var(--tertiary-hover);
+            background-color: var(--tertiary);
+            color: var(--secondary);
           }
         }
       }
@@ -108,12 +123,24 @@
 
             .group-action-link {
               opacity: 0;
-              transition: opacity 0.2s ease;
-              font-size: 0.9em;
-              color: var(--tertiary);
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              background-color: var(--primary-low-mid);
+              color: var(--secondary);
+              font-size: 0.75em;
+              transition: opacity 0.2s ease, background-color 0.2s ease;
+
+              .d-icon {
+                color: currentColor;
+              }
 
               &:hover {
-                color: var(--tertiary-hover);
+                background-color: var(--tertiary);
+                color: var(--secondary);
               }
             }
 
