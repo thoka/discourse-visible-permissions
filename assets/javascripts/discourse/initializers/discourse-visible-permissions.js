@@ -22,59 +22,58 @@ function renderPermissionsTable(node, data) {
   }
   wrapper.appendChild(title);
 
-  const table = document.createElement("div");
-  table.classList.add("category-permissions-table");
+  const table = document.createElement("table");
   table.classList.add("discourse-visible-permissions-table");
 
-  const header = document.createElement("div");
-  header.classList.add("permission-row", "row-header");
-  header.innerHTML = `
-    <span class="group-name">${i18n("groups.index.title")}</span>
-    <span class="options">
-      <span class="cell" title="${i18n("category.permissions.see")}">${iconHTML("far-eye")}</span>
-      <span class="cell" title="${i18n("category.permissions.reply")}">${iconHTML("reply")}</span>
-      <span class="cell" title="${i18n("category.permissions.create")}">${iconHTML("plus")}</span>
-      <span class="cell actions-cell"></span>
-    </span>
+  const thead = document.createElement("thead");
+  thead.innerHTML = `
+    <tr>
+      <th class="group-name-header">${i18n("groups.index.title")}</th>
+      <th class="actions-header"></th>
+      <th class="permission-header" title="${i18n("category.permissions.see")}">${iconHTML("far-eye")}</th>
+      <th class="permission-header" title="${i18n("category.permissions.reply")}">${iconHTML("reply")}</th>
+      <th class="permission-header" title="${i18n("category.permissions.create")}">${iconHTML("plus")}</th>
+    </tr>
   `;
-  table.appendChild(header);
+  table.appendChild(thead);
 
+  const tbody = document.createElement("tbody");
   data.group_permissions.forEach((perm) => {
-    const row = document.createElement("div");
-    row.classList.add("permission-row", "row-body");
+    const tr = document.createElement("tr");
 
     const canReply = perm.permission_type <= 2; // full(1) or create_post(2)
     const canCreate = perm.permission_type === 1; // full(1)
 
     const actionIcons = [];
     if (perm.can_join) {
+      const joinTitle = i18n("discourse_visible_permissions.join");
       actionIcons.push(
-        `<a href="${perm.group_url}" title="${i18n("discourse_visible_permissions.join")}" class="group-action-link join-action">${iconHTML("user-plus")}</a>`
+        `<a href="${perm.group_url}" title="${joinTitle}" class="group-action-link join-action"><span class="d-icon-container">${iconHTML("user-plus")}</span></a>`
       );
     }
     if (perm.can_request) {
+      const requestTitle = i18n("discourse_visible_permissions.request");
       actionIcons.push(
-        `<a href="${perm.group_url}" title="${i18n("discourse_visible_permissions.request")}" class="group-action-link request-action">${iconHTML("paper-plane")}</a>`
+        `<a href="${perm.group_url}" title="${requestTitle}" class="group-action-link request-action"><span class="d-icon-container">${iconHTML("paper-plane")}</span></a>`
       );
     }
 
-    row.innerHTML = `
-      <span class="group-name">
+    tr.innerHTML = `
+      <td class="group-name-cell">
         ${
           perm.group_url
             ? `<a href="${perm.group_url}" class="group-name-link">${perm.group_display_name}</a>`
             : `<span class="group-name-label">${perm.group_display_name}</span>`
         }
-      </span>
-      <span class="options">
-        <span class="cell" title="${i18n("category.permissions.see")}">${iconHTML("square-check")}</span>
-        <span class="cell" title="${i18n("category.permissions.reply")}">${canReply ? iconHTML("square-check") : iconHTML("far-square")}</span>
-        <span class="cell" title="${i18n("category.permissions.create")}">${canCreate ? iconHTML("square-check") : iconHTML("far-square")}</span>
-        <span class="cell actions-cell">${actionIcons.join("")}</span>
-      </span>
+      </td>
+      <td class="actions-cell">${actionIcons.join("")}</td>
+      <td class="permission-cell" title="${i18n("category.permissions.see")}">${iconHTML("square-check")}</td>
+      <td class="permission-cell" title="${i18n("category.permissions.reply")}">${canReply ? iconHTML("square-check") : iconHTML("far-square")}</td>
+      <td class="permission-cell" title="${i18n("category.permissions.create")}">${canCreate ? iconHTML("square-check") : iconHTML("far-square")}</td>
     `;
-    table.appendChild(row);
+    tbody.appendChild(tr);
   });
+  table.appendChild(tbody);
 
   wrapper.appendChild(table);
   node.textContent = "";
@@ -121,17 +120,15 @@ function renderShortView(node, data) {
       .map((p) => {
         const actionIcons = [];
         if (p.can_join) {
+          const joinTitle = i18n("discourse_visible_permissions.join");
           actionIcons.push(
-            `<a href="${
-              p.group_url
-            }" title="${i18n("discourse_visible_permissions.join")}" class="group-action-link join-action">${iconHTML("user-plus")}</a>`
+            `<a href="${p.group_url}" title="${joinTitle}" class="group-action-link join-action"><span class="d-icon-container">${iconHTML("user-plus")}</span></a>`
           );
         }
         if (p.can_request) {
+          const requestTitle = i18n("discourse_visible_permissions.request");
           actionIcons.push(
-            `<a href="${
-              p.group_url
-            }" title="${i18n("discourse_visible_permissions.request")}" class="group-action-link request-action">${iconHTML("paper-plane")}</a>`
+            `<a href="${p.group_url}" title="${requestTitle}" class="group-action-link request-action"><span class="d-icon-container">${iconHTML("paper-plane")}</span></a>`
           );
         }
 
@@ -167,7 +164,9 @@ function renderShortView(node, data) {
 async function loadPermissions(node, api) {
   const categoryId = node.dataset.category;
   const view =
-    node.dataset.view || api.container.lookup("service:site-settings").discourse_visible_permissions_default_view;
+    node.dataset.view ||
+    api.container.lookup("service:site-settings")
+      .discourse_visible_permissions_default_view;
 
   if (!api.getCurrentUser()) {
     node.style.display = "none";

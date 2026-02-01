@@ -1,5 +1,4 @@
 /* Discourse Visible Permissions Styles */
-
 .discourse-visible-permissions-container {
   display: inline-block !important;
   background: var(--secondary);
@@ -7,7 +6,11 @@
   border: 1px solid var(--content-border-color); /* Just to verify it works */
 
   /* Force all links inside to not be blue */
-  a, a:link, a:visited, a:hover, a:active {
+  a,
+  a:link,
+  a:visited,
+  a:hover,
+  a:active {
     color: var(--primary) !important;
     text-decoration: none !important;
   }
@@ -22,24 +25,34 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 16px !important;
-    height: 16px !important;
+    width: 20px !important;
+    height: 20px !important;
     border-radius: 50% !important;
-    background-color: var(--primary-low) !important;
+    background-color: var(--primary-medium) !important;
     color: var(--secondary) !important;
-    font-size: 0.7em !important;
+    font-size: 0.8em !important;
     margin-left: 4px !important;
-    opacity: 0.6 !important;
+    opacity: 1 !important;
     border-bottom: none !important;
+    transition:
+      transform 0.2s ease-in-out,
+      background-color 0.2s ease-in-out;
+
+    .d-icon-container {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: none !important;
+    }
 
     .d-icon {
-      color: currentColor !important;
+      color: currentcolor !important;
     }
 
     &:hover {
       background-color: var(--tertiary) !important;
       color: var(--secondary) !important;
-      opacity: 1 !important;
+      transform: scale(1.2);
     }
   }
 
@@ -50,32 +63,45 @@
     min-width: 300px;
 
     .discourse-visible-permissions-table {
-      .row-header {
+      width: 100%;
+      border-collapse: collapse;
+
+      thead {
         border-bottom: 2px solid var(--primary-low);
-        margin-bottom: 0.5em;
+
+        th {
+          padding: 0.5em 0.25em;
+          text-align: center;
+          color: var(--primary-medium);
+
+          &.group-name-header {
+            text-align: left;
+            color: var(--primary);
+          }
+        }
       }
 
-      .permission-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.25em 0;
-        gap: 1em;
+      tbody {
+        tr {
+          border-bottom: 1px solid var(--primary-low);
 
-        .group-name {
-          font-weight: bold;
-          flex: 1;
+          &:last-child {
+            border-bottom: none;
+          }
         }
 
-        .options {
-          display: flex;
-          gap: 0.5em;
+        td {
+          padding: 0.5em 0.25em;
+          text-align: center;
+          vertical-align: middle;
 
-          .cell {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
+          &.group-name-cell {
+            text-align: left;
+            font-weight: bold;
+          }
+
+          &.permission-cell {
+            width: 40px;
             color: var(--primary-medium);
 
             .d-icon-square-check {
@@ -83,11 +109,10 @@
             }
           }
 
-          .actions-cell {
-            display: flex;
-            gap: 0.5em;
-            margin-left: 0.5em;
-            min-width: 30px;
+          &.actions-cell {
+            width: 60px;
+            text-align: left;
+            padding-left: 1em;
           }
         }
       }
@@ -132,15 +157,11 @@
               .group-name-label {
                 opacity: 1;
               }
-
-              .group-action-link {
-                opacity: 0.8 !important;
-              }
             }
 
             .group-action-link {
-              opacity: 1 !important; /* Hidden until group-item hover */
-              
+              opacity: 0.8 !important;
+
               &:hover {
                 opacity: 1 !important;
               }
