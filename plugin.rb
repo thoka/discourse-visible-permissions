@@ -18,13 +18,18 @@ register_svg_icon "eye"
 register_svg_icon "plus"
 register_svg_icon "user-plus"
 register_svg_icon "paper-plane"
-register_svg_icon "bell"
-register_svg_icon "bell-slash"
+register_svg_icon "bell" if respond_to?(:register_svg_icon)
+register_svg_icon "circle-exclamation" if respond_to?(:register_svg_icon)
+register_svg_icon "circle-dot" if respond_to?(:register_svg_icon)
+register_svg_icon "bell-slash" if respond_to?(:register_svg_icon)
+register_svg_icon "far-bell" if respond_to?(:register_svg_icon)
 register_svg_icon "d-watching"
 register_svg_icon "d-tracking"
 register_svg_icon "d-watching-first"
 register_svg_icon "d-muted"
 register_svg_icon "d-regular"
+register_svg_icon "info-circle"
+register_svg_icon "cog"
 
 module ::DiscourseVisiblePermissions
   PLUGIN_NAME = "discourse-visible-permissions"

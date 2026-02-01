@@ -23,3 +23,16 @@ This plugin provides a dynamic info box for category permissions, integrated via
 - **CategoryGroup**: Primary source for mapping `category_id` -> `group_id` -> `permission_type` (1:Full, 2:Create/Reply, 3:Read).
 - **GroupCategoryNotificationDefault**: Baseline notification levels for groups.
 - **CategoryUser**: Individual user overrides for category notification levels.
+
+## Lessons Learned & Best Practices
+
+### Glimmer Argument Binding in Decorators
+When using `api.decorateCookedElement` with `helper.renderGlimmer`, arguments passed in the third parameter may not be immediately available in the component's `args` (they often appear as an empty Proxy in the constructor).
+
+**Strategy for Robust Data Transfer:**
+1. **DOM as Source of Truth**: Always write critical IDs (like `categoryId`) into the dataset of the placeholder element *before* calling `renderGlimmer`.
+2. **Double-Decoration Prevention**: Immediately swap the identifying class (e.g., from `.discourse-visible-permissions` to `.discourse-visible-permissions-rendered`) to prevent Discourse from re-decorating the same element before Glimmer has finished booting.
+3. **Fallback in `didInsert`**: In the Glimmer component, use the `element` parameter of the `didInsert` modifier to read from the dataset if `this.args` is empty.
+
+### SVG Icons
+Icons used in GJS templates (via `dIcon` helper) must be explicitly registered in `plugin.rb` using `register_svg_icon`, otherwise they will not be included in the client-side SVG subset.

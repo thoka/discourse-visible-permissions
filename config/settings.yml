@@ -22,3 +22,6 @@ discourse_visible_permissions:
   discourse_visible_permissions_min_trust_level:
     default: 0
     client: true
+  discourse_visible_permissions_cache_ttl_minutes:
+    default: 30
+    client: false
