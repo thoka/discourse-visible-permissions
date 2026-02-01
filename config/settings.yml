@@ -8,7 +8,17 @@ discourse_visible_permissions:
     client: true
     choices:
       - table
+      - classic
       - short
+  discourse_visible_permissions_color_create:
+    default: "#3498db"
+    client: true
+  discourse_visible_permissions_color_reply:
+    default: "#2ecc71"
+    client: true
+  discourse_visible_permissions_color_see:
+    default: "#f1c40f"
+    client: true
   discourse_visible_permissions_min_trust_level:
     default: 0
     client: true

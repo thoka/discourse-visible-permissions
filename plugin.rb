@@ -14,7 +14,8 @@ register_asset "stylesheets/discourse-visible-permissions.scss"
 
 register_svg_icon "square-check"
 register_svg_icon "far-square"
-register_svg_icon "far-eye"
+register_svg_icon "eye"
+register_svg_icon "plus"
 register_svg_icon "user-plus"
 register_svg_icon "paper-plane"
 

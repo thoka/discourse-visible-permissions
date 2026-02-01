@@ -53,6 +53,8 @@ module DiscourseVisiblePermissions
         )
       end
 
+      permissions.sort_by! { |p| [p[:permission_type], p[:group_display_name] || ""] }
+
       context[:permissions] = permissions
     end
 

@@ -3,10 +3,10 @@ import { iconHTML } from "discourse/lib/icon-library";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { i18n } from "discourse-i18n";
 
-function renderPermissionsTable(node, data) {
+function renderClassicView(node, data) {
   const wrapper = document.createElement("div");
   wrapper.classList.add("discourse-visible-permissions-container");
-  wrapper.classList.add("view-table");
+  wrapper.classList.add("view-classic");
 
   const title = document.createElement("h3");
   title.classList.add("discourse-visible-permissions-title");
@@ -30,7 +30,7 @@ function renderPermissionsTable(node, data) {
     <tr>
       <th class="group-name-header">${i18n("groups.index.title")}</th>
       <th class="actions-header"></th>
-      <th class="permission-header" title="${i18n("category.permissions.see")}">${iconHTML("far-eye")}</th>
+      <th class="permission-header" title="${i18n("category.permissions.see")}">${iconHTML("eye")}</th>
       <th class="permission-header" title="${i18n("category.permissions.reply")}">${iconHTML("reply")}</th>
       <th class="permission-header" title="${i18n("category.permissions.create")}">${iconHTML("plus")}</th>
     </tr>
@@ -70,6 +70,85 @@ function renderPermissionsTable(node, data) {
       <td class="permission-cell" title="${i18n("category.permissions.see")}">${iconHTML("square-check")}</td>
       <td class="permission-cell" title="${i18n("category.permissions.reply")}">${canReply ? iconHTML("square-check") : iconHTML("far-square")}</td>
       <td class="permission-cell" title="${i18n("category.permissions.create")}">${canCreate ? iconHTML("square-check") : iconHTML("far-square")}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+
+  wrapper.appendChild(table);
+  node.textContent = "";
+  node.appendChild(wrapper);
+}
+
+function renderPermissionsTable(node, data, siteSettings) {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("discourse-visible-permissions-container");
+  wrapper.classList.add("view-table");
+
+  const title = document.createElement("h3");
+  title.classList.add("discourse-visible-permissions-title");
+
+  if (data.category_url) {
+    title.innerHTML = i18n("discourse_visible_permissions.table_title", {
+      category_name: `<a href="${data.category_url}" class="category-name-link">${data.category_name}</a>`,
+    });
+  } else {
+    title.textContent = i18n("discourse_visible_permissions.table_title", {
+      category_name: data.category_name,
+    });
+  }
+  wrapper.appendChild(title);
+
+  const table = document.createElement("table");
+  table.classList.add("discourse-visible-permissions-table", "modern-view");
+
+  const tbody = document.createElement("tbody");
+  data.group_permissions.forEach((perm) => {
+    const tr = document.createElement("tr");
+
+    const actionIcons = [];
+    if (perm.can_join) {
+      const joinTitle = i18n("discourse_visible_permissions.join");
+      actionIcons.push(
+        `<a href="${perm.group_url}" title="${joinTitle}" class="group-action-link join-action"><span class="d-icon-container">${iconHTML("user-plus")}</span></a>`
+      );
+    }
+    if (perm.can_request) {
+      const requestTitle = i18n("discourse_visible_permissions.request");
+      actionIcons.push(
+        `<a href="${perm.group_url}" title="${requestTitle}" class="group-action-link request-action"><span class="d-icon-container">${iconHTML("paper-plane")}</span></a>`
+      );
+    }
+
+    let permIcon, permColor, permTitle;
+    if (perm.permission_type === 1) {
+      permIcon = iconHTML("plus");
+      permColor = siteSettings.discourse_visible_permissions_color_create;
+      permTitle = i18n("category.permissions.create");
+    } else if (perm.permission_type === 2) {
+      permIcon = iconHTML("reply");
+      permColor = siteSettings.discourse_visible_permissions_color_reply;
+      permTitle = i18n("category.permissions.reply");
+    } else {
+      permIcon = iconHTML("eye");
+      permColor = siteSettings.discourse_visible_permissions_color_see;
+      permTitle = i18n("category.permissions.see");
+    }
+
+    tr.innerHTML = `
+      <td class="group-name-cell">
+        ${
+          perm.group_url
+            ? `<a href="${perm.group_url}" class="group-name-link">${perm.group_display_name}</a>`
+            : `<span class="group-name-label">${perm.group_display_name}</span>`
+        }
+      </td>
+      <td class="actions-cell">${actionIcons.join("")}</td>
+      <td class="permission-badge-cell">
+        <span class="permission-badge" style="background-color: ${permColor}" title="${permTitle}">
+          ${permIcon}
+        </span>
+      </td>
     `;
     tbody.appendChild(tr);
   });
@@ -153,7 +232,7 @@ function renderShortView(node, data) {
   container.innerHTML = `
     ${renderSection("plus", createGroups)}
     ${renderSection("reply", replyGroups)}
-    ${renderSection("far-eye", seeGroups)}
+    ${renderSection("eye", seeGroups)}
   `;
 
   wrapper.appendChild(container);
@@ -182,10 +261,14 @@ async function loadPermissions(node, api) {
 
   try {
     const data = await ajax(`/c/${categoryId}/permissions.json`);
+    const siteSettings = api.container.lookup("service:site-settings");
+
     if (view === "short") {
       renderShortView(node, data);
+    } else if (view === "classic") {
+      renderClassicView(node, data);
     } else {
-      renderPermissionsTable(node, data);
+      renderPermissionsTable(node, data, siteSettings);
     }
   } catch (e) {
     if (e.status === 403 || e.status === 404) {

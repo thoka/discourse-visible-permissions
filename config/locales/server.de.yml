@@ -2,6 +2,9 @@ de:
   site_settings:
     discourse_visible_permissions_enabled: "Sichtbare Berechtigungen für Kategorien aktivieren."
     discourse_visible_permissions_default_view: "Standardansicht für den Berechtigungs-Tag."
+    discourse_visible_permissions_color_create: "Farbe für das 'Erstellen'-Abzeichen (Hex)."
+    discourse_visible_permissions_color_reply: "Farbe für das 'Antworten'-Abzeichen (Hex)."
+    discourse_visible_permissions_color_see: "Farbe für das 'Sehen'-Abzeichen (Hex)."
     discourse_visible_permissions_min_trust_level: "Mindest-Vertrauensstufe, um den Berechtigungs-Tag zu sehen."
   discourse_visible_permissions:
     everyone: "jeder"
