@@ -27,12 +27,14 @@ module DiscourseVisiblePermissions
           # Fetch data for all potentially relevant groups
           groups = Group.where(id: all_group_ids).to_a
 
-          # Calculate totals for the entire category
+          # Calculate totals for the entire category (Unique Reach)
           category_notification_totals = calculate_category_notification_totals(category)
 
           # Calculate levels for each group efficiently
           group_notification_counts =
             calculate_group_notification_counts(all_group_ids, category.id)
+
+          group_user_counts = Group.where(id: all_group_ids).joins(:group_users).group(:group_id).count
 
           group_data =
             groups.map do |group|
@@ -42,12 +44,19 @@ module DiscourseVisiblePermissions
                 end
               category_group = group.category_groups.find { |cg| cg.category_id == category.id }
 
+              user_count = if group.id == Group::AUTO_GROUPS[:everyone]
+                category.read_restricted? ? category_notification_totals[:total_reach] : User.real.count
+              else
+                group_user_counts[group.id] || 0
+              end
+
               {
                 group_id: group.id,
                 group_name: group.name,
                 group_full_name: group.full_name,
                 public_admission: group.public_admission,
                 allow_membership_requests: group.allow_membership_requests,
+                user_count: user_count,
                 permission_type:
                   category_group&.permission_type || CategoryGroup.permission_types[:readonly],
                 notification_level: notification_default&.notification_level,
@@ -127,35 +136,57 @@ module DiscourseVisiblePermissions
     end
 
     def calculate_category_notification_totals(category)
-      # Combined query to find the highest notification level for each user in this category
+      # 1. Identify all users who can see this category
+      if category.read_restricted?
+        # Only users in groups that have at least "See" permission
+        allowed_group_ids = category.category_groups.pluck(:group_id)
+        if allowed_group_ids.empty?
+          return { total_reach: 0 }
+        end
+        user_ids_with_access_subquery = "SELECT gu.user_id FROM group_users gu WHERE gu.group_id IN (#{allowed_group_ids.join(",")})"
+      else
+        # All real users
+        user_ids_with_access_subquery = "SELECT id as user_id FROM users WHERE id > 0 AND active AND NOT staged"
+      end
+
+      # 2. Highest notification level for these users
       sql = <<~SQL
-        SELECT notification_level, COUNT(*) as count
-        FROM (
-          SELECT user_id, MAX(notification_level) as notification_level
-          FROM (
-            SELECT user_id, notification_level FROM category_users WHERE category_id = :category_id
-            UNION ALL
-            SELECT gu.user_id, gd.notification_level
-            FROM group_category_notification_defaults gd
-            JOIN group_users gu ON gu.group_id = gd.group_id
-            WHERE gd.category_id = :category_id
-          ) AS all_levels
-          GROUP BY user_id
-        ) AS max_levels
-        GROUP BY notification_level
+        WITH AccessUsers AS (
+          #{user_ids_with_access_subquery}
+        ),
+        AllSettings AS (
+          -- Explicit overrides
+          SELECT cu.user_id, cu.notification_level 
+          FROM category_users cu
+          WHERE cu.category_id = :category_id
+          AND cu.user_id IN (SELECT user_id FROM AccessUsers)
+          
+          UNION ALL
+          
+          -- Group defaults
+          SELECT gu.user_id, gd.notification_level
+          FROM group_category_notification_defaults gd
+          JOIN group_users gu ON gu.group_id = gd.group_id
+          WHERE gd.category_id = :category_id
+          AND gu.user_id IN (SELECT user_id FROM AccessUsers)
+        ),
+        TargetUsers AS (
+          SELECT au.user_id, MAX(s.notification_level) as level
+          FROM AccessUsers au
+          LEFT JOIN AllSettings s ON s.user_id = au.user_id
+          GROUP BY au.user_id
+        )
+        SELECT COALESCE(level, :regular_level) as final_level, COUNT(*) as count
+        FROM TargetUsers
+        GROUP BY final_level
       SQL
 
       counts = Hash.new(0)
-      DB
-        .query(sql, category_id: category.id)
-        .each { |row| counts[row.notification_level.to_i] = row.count.to_i }
-
-      # Add regular users who don't have an override or default
-      # Total real users minus those with any special level
-      total_special_users = counts.values.sum
-      total_real_users = User.real.count
-      counts[NotificationLevels.all[:regular]] += [0, total_real_users - total_special_users].max
-
+      DB.query(sql, category_id: category.id, regular_level: NotificationLevels.all[:regular]).each do |row|
+        counts[row.final_level.to_i] = row.count.to_i
+      end
+      
+      counts[:total_reach] = counts.values.sum
       counts
     end
 

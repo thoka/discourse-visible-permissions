@@ -243,6 +243,10 @@ export default class VisiblePermissionsTable extends Component {
     return this.data.category_notification_totals[level] || "";
   }
 
+  get totalReach() {
+    return this.data?.category_notification_totals?.total_reach || 0;
+  }
+
   <template>
     {{#if this.shouldRender}}
       <div
@@ -391,9 +395,13 @@ export default class VisiblePermissionsTable extends Component {
               </tbody>
               <tfoot>
                 <tr class="summary-row">
-                  <td class="group-name-cell cell" colspan="4">
+                  <td class="group-name-cell cell" colspan="1">
                     {{i18n "js.discourse_visible_permissions.total"}}
                   </td>
+                  <td class="users-count-cell cell">
+                    {{this.totalReach}}
+                  </td>
+                  <td colspan="2"></td>
                   <td
                     class="notification-cell level-3 cell"
                   >{{this.getTotalCount 3}}</td>
