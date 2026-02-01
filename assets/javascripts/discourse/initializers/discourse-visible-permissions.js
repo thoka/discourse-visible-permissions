@@ -1,6 +1,6 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
-import VisiblePermissionsTable from "../components/visible-permissions/table";
 import VisiblePermissionsSummary from "../components/visible-permissions-summary";
+import VisiblePermissionsTable from "../components/visible-permissions/table";
 
 export default {
   name: "discourse-visible-permissions",
@@ -12,6 +12,11 @@ export default {
     }
 
     withPluginApi("1.34.0", (api) => {
+      // Summary im Header vor dem "Thema erstellen" Button
+      api.renderInOutlet("before-create-topic-button", VisiblePermissionsSummary);
+      api.renderInOutlet("topic-footer-main-buttons-before-create", VisiblePermissionsSummary);
+
+
       // BBCode decoration
       api.decorateCookedElement(
         (element, helper) => {

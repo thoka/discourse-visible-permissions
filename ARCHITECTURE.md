@@ -7,10 +7,9 @@ This plugin provides a dynamic info box for category permissions, integrated via
 2. **Data Fetch**: It calls `GET /c/:id/permissions.json`, handled by `PermissionsController#show`.
 3. **Broadened Access**: The controller checks if a user meets `min_trust_level`. Even if a user cannot "see" a category (restricted content), metadata is returned if at least one associated group is joinable/requestable.
 4. **Data Aggregation**: `PermissionsFetcher` (Service) gathers category groups, permission types, and user membership status. It sorts permissions by hierarchy (highest access level first) and then by group name.
-5. **Dynamic Rendering**: The initializer renders the localized UI in three distinct views:
-   - `table` (Default): Modern hierarchical view showing highest permission only via color-coded badges.
-   - `classic`: Full matrix view showing See/Reply/Create status checkboxes.
-   - `short`: Iconic view grouping groups by their maximum permission level.
+5. **Dynamic Rendering**: The initializer renders the localized UI in distinct views:
+   - **Summary**: Rendered via `before-create-topic-button` outlet on category pages, providing a quick glance at group access.
+   - **Table**: Injected into posts via BBCode `[show-permissions]` for detailed breakdowns.
 6. **Notification Summary**: Displays an aggregate row (Total) at the bottom of the table showing the actual subscription levels of all users in the category.
 
 ## Key Components

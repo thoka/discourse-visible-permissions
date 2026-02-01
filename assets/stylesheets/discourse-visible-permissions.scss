@@ -492,3 +492,19 @@
     font-weight: bold;
   }
 }
+
+.discourse-visible-permissions-summary {
+  .notification-levels-container.compact {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
+
+    .sum-symbol {
+      font-weight: bold;
+      font-size: var(--font-up-1);
+      color: var(--primary-high);
+      margin-right: 2px;
+    }
+  }
+}

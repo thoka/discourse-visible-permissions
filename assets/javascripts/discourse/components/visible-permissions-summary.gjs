@@ -109,7 +109,13 @@ export default class VisiblePermissionsSummary extends Component {
           <span class="loading-placeholder">{{i18n "discourse_visible_permissions.loading"}}</span>
         {{else if this.data}}
           <a href {{on "click" this.showDetails}} class="permissions-summary-trigger">
+            <span
+              class="sum-symbol"
+              title={{i18n "js.discourse_visible_permissions.potential_notifications"}}
+            > &Sigma;</span>
+            <!-- 
             <span class="summary-label">{{i18n "discourse_visible_permissions.potential_notifications"}}:</span>
+            -->
             <div class="notification-levels-container compact">
               {{#each this.notificationTotals as |lvl|}}
                 <span class="notification-level-item">
