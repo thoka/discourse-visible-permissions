@@ -3,11 +3,13 @@
 This plugin enables an infobox about configured permissions (who is allowed to create/respond/read) for categories.
 
 ## Features
-- **Permission Table**: Displays who can see, reply, and create topics in a category.
+- **Hierarchical Table (Default)**: A modern, minimalist display showing only the highest permission level per group using color-coded badges.
+- **Classic Table (`classic`)**: A detailed matrix view showing See/Reply/Create status for each group.
 - **Compact View (`short`)**: A streamlined display grouping groups by permission level with icons.
 - **Join/Request Action Buttons**:
   - `user-plus` icon: Join groups that allow public admission.
   - `paper-plane` icon: Request membership for groups that allow it.
+- **Configurable Colors**: Admin-defined colors for permission level badges (Create, Reply, See).
 - **Interactive Links**: Group names link to group pages, and the category name in the title links to the category page.
 - **Localization**: Full support for German and English, including localized automatic group names (e.g., "jeder", "Team").
 - **Automatic Detection**: Using `[show-permissions]` without a category ID inside a topic automatically detects the category from the topic.
@@ -31,14 +33,18 @@ Use:
 
 Example BBCode:
 - `[show-permissions category=5]`
-- `[show-permissions category=5 view="short"]` (Available views: `table`, `short`)
+- `[show-permissions category=5 view="classic"]` (Detailed matrix view)
+- `[show-permissions category=5 view="short"]` (Icon list by level)
 - `[show-permissions category=5 class="custom-class"]`
 - `[show-permissions]` (automatically detects the current category when used inside a topic)
 
 ## Configuration
 
 You can set the default view for all `[show-permissions]` tags in the site settings:
-- `discourse_visible_permissions_default_view`: Choose between `table` (default) and `short`.
+- `discourse_visible_permissions_default_view`: Choose between `table` (modern, default), `classic`, and `short`.
+- `discourse_visible_permissions_color_create`: Hex color for the "Create" badge.
+- `discourse_visible_permissions_color_reply`: Hex color for the "Reply" badge.
+- `discourse_visible_permissions_color_see`: Hex color for the "See" badge.
 - `discourse_visible_permissions_min_trust_level`: Minimum trust level required to see the tag (default: 0).
 
 ## Rake Tasks
