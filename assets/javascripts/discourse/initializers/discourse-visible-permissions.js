@@ -165,41 +165,59 @@ function renderPermissionsTable(node, data, siteSettings) {
       );
     }
 
-    let notificationIcon, notificationTitle;
-    const level = perm.notification_level;
-    if (level === 0) {
-      notificationIcon = iconHTML("bell-slash");
-      notificationTitle = i18n(
-        "discourse_visible_permissions.notification_levels.muted"
-      );
-    } else if (level === 2) {
-      notificationIcon = iconHTML("bell");
-      notificationTitle = i18n(
-        "discourse_visible_permissions.notification_levels.tracking"
-      );
-    } else if (level === 3) {
-      notificationIcon = iconHTML("bell");
-      notificationTitle = i18n(
-        "discourse_visible_permissions.notification_levels.watching"
-      );
-    } else if (level === 4) {
-      notificationIcon = iconHTML("bell");
-      notificationTitle = i18n(
-        "discourse_visible_permissions.notification_levels.watching_first_post"
-      );
-    } else {
-      notificationIcon = iconHTML("bell");
-      notificationTitle = i18n(
-        "discourse_visible_permissions.notification_levels.regular"
-      );
-    }
+    const notificationLevelsHtml = [];
+    // Levels in order: Watching(3), Watching First(4), Tracking(2), Regular(1), Muted(0)
+    [3, 4, 2, 1, 0].forEach((lvl) => {
+      const count = perm.notification_levels[lvl];
+      if (count > 0) {
+        let icon, levelTitle, className;
+        if (lvl === 3) {
+          icon = iconHTML("bell");
+          levelTitle = i18n(
+            "discourse_visible_permissions.notification_levels.watching"
+          );
+          className = "level-watching";
+        } else if (lvl === 4) {
+          icon = iconHTML("bell");
+          levelTitle = i18n(
+            "discourse_visible_permissions.notification_levels.watching_first_post"
+          );
+          className = "level-watching-first";
+        } else if (lvl === 2) {
+          icon = iconHTML("bell");
+          levelTitle = i18n(
+            "discourse_visible_permissions.notification_levels.tracking"
+          );
+          className = "level-tracking";
+        } else if (lvl === 1) {
+          icon = iconHTML("bell");
+          levelTitle = i18n(
+            "discourse_visible_permissions.notification_levels.regular"
+          );
+          className = "level-regular";
+        } else {
+          icon = iconHTML("bell-slash");
+          levelTitle = i18n(
+            "discourse_visible_permissions.notification_levels.muted"
+          );
+          className = "level-muted";
+        }
 
-    const notifiedCountTitle = i18n(
-      "discourse_visible_permissions.notified_count",
-      {
-        count: perm.notified_count,
+        const notifiedText = i18n(
+          "discourse_visible_permissions.notified_count",
+          {
+            count,
+          }
+        );
+
+        notificationLevelsHtml.push(`
+          <span class="notification-level-item ${className}" title="${levelTitle}: ${notifiedText}">
+            <span class="notification-icon">${icon}</span>
+            <span class="notification-count">${count}</span>
+          </span>
+        `);
       }
-    );
+    });
 
     let permIcon, permColor, permTitle;
     if (perm.permission_type === 1) {
@@ -230,9 +248,10 @@ function renderPermissionsTable(node, data, siteSettings) {
         }
       </td>
       <td class="actions-cell">${actionIcons.join("")}</td>
-      <td class="notification-cell" title="${notificationTitle}">
-        <span class="notification-icon">${notificationIcon}</span>
-        <span class="notified-count" title="${notifiedCountTitle}">${perm.notified_count}</span>
+      <td class="notification-cell">
+        <div class="notification-levels-container">
+          ${notificationLevelsHtml.join("")}
+        </div>
       </td>
       <td class="permission-badge-cell">
         ${

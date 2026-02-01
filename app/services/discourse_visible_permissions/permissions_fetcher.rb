@@ -48,7 +48,8 @@ module DiscourseVisiblePermissions
             is_member: is_member,
             group_url: guardian.can_see?(group) ? "/g/#{group.name}" : nil,
             notification_level: notification_default&.notification_level,
-            notified_count: calculate_notified_count(group, category, notification_default),
+            notification_levels:
+              calculate_notification_levels(group, category, notification_default),
           }
         end
 
@@ -68,6 +69,8 @@ module DiscourseVisiblePermissions
             group_url: "/g/everyone",
             notification_level: nil,
             notified_count: 0,
+            notification_levels: {
+            },
           },
         )
       end
@@ -77,28 +80,25 @@ module DiscourseVisiblePermissions
       context[:permissions] = permissions
     end
 
-    def calculate_notified_count(group, category, notification_default)
+    def calculate_notification_levels(group, category, notification_default)
       default_level = notification_default&.notification_level || NotificationLevels.all[:regular]
-      regular = NotificationLevels.all[:regular]
 
       # Users in group
       group_user_ids = group.users.select(:id)
 
-      # Count users with specific notification level > regular
-      overridden_count =
+      # Get all overrides for these users in this category
+      overrides =
         CategoryUser
           .where(category: category, user_id: group_user_ids)
-          .where("notification_level > ?", regular)
-          .count
+          .pluck(:user_id, :notification_level)
+          .to_h
 
-      # If default level is > regular, we also count users with NO override
-      if default_level > regular
-        no_override_count =
-          group.users.where.not(id: CategoryUser.where(category: category).select(:user_id)).count
-        return overridden_count + no_override_count
-      end
+      counts = Hash.new(0)
 
-      overridden_count
+      # We need to apply default_level to users without an override
+      group.users.pluck(:id).each { |user_id| counts[overrides[user_id] || default_level] += 1 }
+
+      counts
     end
 
     def group_display_name(group)

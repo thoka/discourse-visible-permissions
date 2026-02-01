@@ -74,10 +74,10 @@ RSpec.describe DiscourseVisiblePermissions::PermissionsController do
       group_perm = json["group_permissions"].find { |p| p["group_id"] == group.id }
       
       # user_in_group and another_user are in the group.
-      expect(group_perm["notified_count"]).to eq(2)
+      expect(group_perm["notification_levels"]["3"]).to eq(2) # Level 3 = Watching
     end
 
-    it "adjusts notified_count based on individual user overrides" do
+    it "adjusts notification levels based on individual user overrides" do
       GroupCategoryNotificationDefault.create!(
         group: group,
         category: category,
@@ -96,14 +96,9 @@ RSpec.describe DiscourseVisiblePermissions::PermissionsController do
       json = response.parsed_body
       group_perm = json["group_permissions"].find { |p| p["group_id"] == group.id }
       
-      # Only users NOT muted should be counted if group is watching.
-      # Wait, notified_count should actually count who gets notified.
-      # Group Watching = 1 notified (since 1 muted override)
-      expect(group_perm["notified_count"]).to eq(0) 
-      # Wait, let's re-evaluate. 
-      # User1 is in group. Group is watching. User1 mutes specifically.
-      # User1 will NOT be notified.
-      # So count should be 0 for this group (if User1 is the only member).
+      # Group Watching(3) but User Muted(0)
+      expect(group_perm["notification_levels"]["3"].to_i).to eq(0)
+      expect(group_perm["notification_levels"]["0"].to_i).to eq(1)
     end
   end
 end

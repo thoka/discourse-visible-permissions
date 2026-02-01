@@ -139,26 +139,74 @@
           }
 
           &.notification-cell {
-            width: 80px;
+            width: 120px;
             color: var(--primary-medium);
             text-align: center;
 
-            .notification-icon {
-              margin-right: 4px;
-
-              .d-icon {
-                color: var(--primary-low-mid);
-                width: 14px;
-                height: 14px;
-                vertical-align: middle;
-              }
+            .notification-levels-container {
+              display: flex;
+              gap: 8px;
+              justify-content: center;
+              align-items: center;
             }
 
-            .notified-count {
-              font-size: 0.9em;
-              font-weight: normal;
-              color: var(--primary-high);
-              vertical-align: middle;
+            .notification-level-item {
+              display: inline-flex;
+              align-items: center;
+              gap: 2px;
+              cursor: help;
+
+              .notification-icon {
+                display: flex;
+                align-items: center;
+
+                .d-icon {
+                  width: 14px;
+                  height: 14px;
+                }
+              }
+
+              .notification-count {
+                font-size: 0.85em;
+                font-weight: bold;
+              }
+
+              &.level-watching {
+                color: var(--success);
+
+                .notification-icon .d-icon {
+                  color: var(--success);
+                }
+              }
+
+              &.level-watching-first {
+                color: var(--tertiary);
+
+                .notification-icon .d-icon {
+                  color: var(--tertiary);
+                }
+              }
+
+              &.level-tracking {
+                color: var(--primary-high);
+
+                .notification-icon .d-icon {
+                  color: var(--primary-high);
+                }
+              }
+
+              &.level-regular {
+                color: var(--primary-medium);
+                opacity: 0.7;
+              }
+
+              &.level-muted {
+                color: var(--primary-low-mid);
+
+                .notification-icon .d-icon {
+                  color: var(--primary-low-mid);
+                }
+              }
             }
           }
         }
