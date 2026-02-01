@@ -42,6 +42,25 @@ after_initialize do
   require_relative "app/controllers/discourse_visible_permissions/permissions_controller"
   require_relative "app/services/discourse_visible_permissions/permissions_fetcher"
 
+  add_to_serializer(:basic_category, :visible_permissions) do
+    return nil if !SiteSetting.discourse_visible_permissions_enabled
+    return nil if !scope&.user
+    return nil if scope.user.trust_level < SiteSetting.discourse_visible_permissions_min_trust_level
+
+    # Use the fetcher with a short TTL (or 0) for serialization
+    # We could also use the cache here
+    result =
+      DiscourseVisiblePermissions::PermissionsFetcher.call(category: object, guardian: scope)
+
+    {
+      category_id: object.id,
+      category_name: object.name,
+      category_url: object.url,
+      group_permissions: result.permissions,
+      category_notification_totals: result.category_notification_totals,
+    }
+  end
+
   Discourse::Application.routes.prepend do
     get "/c/:category_id/permissions" => "discourse_visible_permissions/permissions#show",
         :constraints => {

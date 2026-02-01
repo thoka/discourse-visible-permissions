@@ -65,6 +65,13 @@ export default class VisiblePermissionsSummary extends Component {
     if (!categoryId || categoryId === this._lastCategoryId) {return;}
     this._lastCategoryId = categoryId;
 
+    // First check if the data is already in components args (from CategorySerializer)
+    const category = this.args.category || this.args.outletArgs?.category;
+    if (category?.visible_permissions) {
+      this.data = category.visible_permissions;
+      return;
+    }
+
     if (PERMISSIONS_CACHE.has(categoryId)) {
       this.data = PERMISSIONS_CACHE.get(categoryId);
       return;

@@ -112,6 +112,19 @@ export default class VisiblePermissionsTable extends Component {
       return;
     }
 
+    // Check for data in category model before fetching (Injected via CategorySerializer)
+    const topic = this.args.topic || this.args.model?.topic;
+    const modelCategory = this.args.category || this.args.model?.category;
+    
+    // Attempt to find the category object if it has visible_permissions
+    const categorySource = [modelCategory, topic?.category].find(c => c?.id === categoryId && c?.visible_permissions);
+    
+    if (categorySource?.visible_permissions) {
+      this.data = categorySource.visible_permissions;
+      this._lastCategoryId = categoryId;
+      return;
+    }
+
     if (
       PERMISSIONS_CACHE.has(categoryId) &&
       this._lastCategoryId === categoryId
