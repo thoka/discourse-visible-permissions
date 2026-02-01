@@ -12,3 +12,10 @@ de:
       table_title: "Berechtigungen im Bereich „%{category_name}“"
       join: "Gruppe beitreten"
       request: "Mitgliedschaft anfragen"
+      notified_count: "%{count} Nutzer werden benachrichtigt"
+      notification_levels:
+        muted: "Stummgeschaltet"
+        regular: "Normal"
+        tracking: "Verfolgt"
+        watching: "Beobachtet"
+        watching_first_post: "Ersten Beitrag beobachten"

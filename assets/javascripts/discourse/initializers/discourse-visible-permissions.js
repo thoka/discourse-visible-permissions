@@ -41,8 +41,10 @@ function renderClassicView(node, data) {
   data.group_permissions.forEach((perm) => {
     const tr = document.createElement("tr");
 
-    const canReply = perm.permission_type <= 2; // full(1) or create_post(2)
-    const canCreate = perm.permission_type === 1; // full(1)
+    const pt = perm.permission_type;
+    const canSee = pt !== null && pt !== undefined;
+    const canReply = canSee && pt <= 2; // full(1) or create_post(2)
+    const canCreate = pt === 1; // full(1)
 
     const actionIcons = [];
     if (perm.can_join) {
@@ -58,6 +60,45 @@ function renderClassicView(node, data) {
       );
     }
 
+    let notificationIcon, notificationTitle;
+    const level = perm.notification_level;
+    if (level === 0) {
+      notificationIcon = iconHTML("bell-slash");
+      notificationTitle = i18n(
+        "discourse_visible_permissions.notification_levels.muted"
+      );
+    } else if (level === 2) {
+      notificationIcon = iconHTML("bell");
+      notificationTitle = i18n(
+        "discourse_visible_permissions.notification_levels.tracking"
+      );
+    } else if (level === 3) {
+      notificationIcon = iconHTML("bell");
+      notificationTitle = i18n(
+        "discourse_visible_permissions.notification_levels.watching"
+      );
+    } else if (level === 4) {
+      notificationIcon = iconHTML("bell");
+      notificationTitle = i18n(
+        "discourse_visible_permissions.notification_levels.watching_first_post"
+      );
+    } else if (level === 1) {
+      notificationIcon = iconHTML("bell");
+      notificationTitle = i18n(
+        "discourse_visible_permissions.notification_levels.regular"
+      );
+    } else {
+      notificationIcon = "";
+      notificationTitle = "";
+    }
+
+    const notifiedCountTitle = i18n(
+      "discourse_visible_permissions.notified_count",
+      {
+        count: perm.notified_count,
+      }
+    );
+
     tr.innerHTML = `
       <td class="group-name-cell">
         ${
@@ -67,7 +108,11 @@ function renderClassicView(node, data) {
         }
       </td>
       <td class="actions-cell">${actionIcons.join("")}</td>
-      <td class="permission-cell" title="${i18n("category.permissions.see")}">${iconHTML("square-check")}</td>
+      <td class="notification-cell" title="${notificationTitle}">
+        ${notificationIcon ? `<span class="notification-icon">${notificationIcon}</span>` : ""}
+        <span class="notified-count" title="${notifiedCountTitle}">${perm.notified_count}</span>
+      </td>
+      <td class="permission-cell" title="${i18n("category.permissions.see")}">${canSee ? iconHTML("square-check") : iconHTML("far-square")}</td>
       <td class="permission-cell" title="${i18n("category.permissions.reply")}">${canReply ? iconHTML("square-check") : iconHTML("far-square")}</td>
       <td class="permission-cell" title="${i18n("category.permissions.create")}">${canCreate ? iconHTML("square-check") : iconHTML("far-square")}</td>
     `;
@@ -120,6 +165,42 @@ function renderPermissionsTable(node, data, siteSettings) {
       );
     }
 
+    let notificationIcon, notificationTitle;
+    const level = perm.notification_level;
+    if (level === 0) {
+      notificationIcon = iconHTML("bell-slash");
+      notificationTitle = i18n(
+        "discourse_visible_permissions.notification_levels.muted"
+      );
+    } else if (level === 2) {
+      notificationIcon = iconHTML("bell");
+      notificationTitle = i18n(
+        "discourse_visible_permissions.notification_levels.tracking"
+      );
+    } else if (level === 3) {
+      notificationIcon = iconHTML("bell");
+      notificationTitle = i18n(
+        "discourse_visible_permissions.notification_levels.watching"
+      );
+    } else if (level === 4) {
+      notificationIcon = iconHTML("bell");
+      notificationTitle = i18n(
+        "discourse_visible_permissions.notification_levels.watching_first_post"
+      );
+    } else {
+      notificationIcon = iconHTML("bell");
+      notificationTitle = i18n(
+        "discourse_visible_permissions.notification_levels.regular"
+      );
+    }
+
+    const notifiedCountTitle = i18n(
+      "discourse_visible_permissions.notified_count",
+      {
+        count: perm.notified_count,
+      }
+    );
+
     let permIcon, permColor, permTitle;
     if (perm.permission_type === 1) {
       permIcon = iconHTML("plus");
@@ -129,10 +210,15 @@ function renderPermissionsTable(node, data, siteSettings) {
       permIcon = iconHTML("reply");
       permColor = siteSettings.discourse_visible_permissions_color_reply;
       permTitle = i18n("category.permissions.reply");
-    } else {
+    } else if (perm.permission_type === 3) {
       permIcon = iconHTML("eye");
       permColor = siteSettings.discourse_visible_permissions_color_see;
       permTitle = i18n("category.permissions.see");
+    } else {
+      // No permission explicitly set, but shown because of notification defaults
+      permIcon = "";
+      permColor = "transparent";
+      permTitle = "";
     }
 
     tr.innerHTML = `
@@ -144,10 +230,18 @@ function renderPermissionsTable(node, data, siteSettings) {
         }
       </td>
       <td class="actions-cell">${actionIcons.join("")}</td>
+      <td class="notification-cell" title="${notificationTitle}">
+        <span class="notification-icon">${notificationIcon}</span>
+        <span class="notified-count" title="${notifiedCountTitle}">${perm.notified_count}</span>
+      </td>
       <td class="permission-badge-cell">
-        <span class="permission-badge" style="background-color: ${permColor}" title="${permTitle}">
+        ${
+          permIcon
+            ? `<span class="permission-badge" style="background-color: ${permColor}" title="${permTitle}">
           ${permIcon}
-        </span>
+        </span>`
+            : ""
+        }
       </td>
     `;
     tbody.appendChild(tr);

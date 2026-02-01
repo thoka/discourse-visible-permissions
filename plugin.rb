@@ -18,6 +18,8 @@ register_svg_icon "eye"
 register_svg_icon "plus"
 register_svg_icon "user-plus"
 register_svg_icon "paper-plane"
+register_svg_icon "bell"
+register_svg_icon "bell-slash"
 
 module ::DiscourseVisiblePermissions
   PLUGIN_NAME = "discourse-visible-permissions"

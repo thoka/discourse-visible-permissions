@@ -12,3 +12,10 @@ en:
       table_title: "Permissions in area \"%{category_name}\""
       join: "Join group"
       request: "Request membership"
+      notified_count: "%{count} users notified"
+      notification_levels:
+        muted: "Muted"
+        regular: "Regular"
+        tracking: "Tracking"
+        watching: "Watching"
+        watching_first_post: "Watching First Post"

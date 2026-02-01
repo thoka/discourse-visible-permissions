@@ -137,6 +137,30 @@
             text-align: left;
             padding-left: 1em;
           }
+
+          &.notification-cell {
+            width: 80px;
+            color: var(--primary-medium);
+            text-align: center;
+
+            .notification-icon {
+              margin-right: 4px;
+
+              .d-icon {
+                color: var(--primary-low-mid);
+                width: 14px;
+                height: 14px;
+                vertical-align: middle;
+              }
+            }
+
+            .notified-count {
+              font-size: 0.9em;
+              font-weight: normal;
+              color: var(--primary-high);
+              vertical-align: middle;
+            }
+          }
         }
       }
     }
