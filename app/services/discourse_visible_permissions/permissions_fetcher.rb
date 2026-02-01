@@ -150,7 +150,7 @@ module DiscourseVisiblePermissions
         user_ids_with_access_subquery =
           "SELECT gu.user_id FROM group_users gu WHERE gu.group_id IN (#{allowed_group_ids.join(",")})"
       else
-        # All real users
+        # All real, active, human users
         user_ids_with_access_subquery =
           "SELECT id as user_id FROM users WHERE id > 0 AND active AND NOT staged"
       end
@@ -177,7 +177,7 @@ module DiscourseVisiblePermissions
           AND gu.user_id IN (SELECT user_id FROM AccessUsers)
         ),
         TargetUsers AS (
-          SELECT au.user_id, MAX(s.notification_level) as level
+          SELECT DISTINCT au.user_id, MAX(s.notification_level) as level
           FROM AccessUsers au
           LEFT JOIN AllSettings s ON s.user_id = au.user_id
           GROUP BY au.user_id
@@ -188,9 +188,8 @@ module DiscourseVisiblePermissions
       SQL
 
       counts = Hash.new(0)
-      DB
-        .query(sql, category_id: category.id, regular_level: NotificationLevels.all[:regular])
-        .each { |row| counts[row.final_level.to_i] = row.count.to_i }
+      res = DB.query(sql, category_id: category.id, regular_level: NotificationLevels.all[:regular])
+      res.each { |row| counts[row.final_level.to_i] = row.count.to_i }
 
       counts[:total_reach] = counts.values.sum
       counts

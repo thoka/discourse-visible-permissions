@@ -2,34 +2,86 @@
 require File.expand_path("../../../../../spec/rails_helper", __dir__)
 
 describe DiscourseVisiblePermissions::PermissionsFetcher do
-  fab!(:category)
-  fab!(:group)
-  fab!(:user_1, :user)
-  fab!(:user_2, :user)
+  fab!(:category) { Fabricate(:category) }
+  # Ensure the group is NOT an automatic group to avoid unexpected members
+  fab!(:group) { Fabricate(:group, automatic: false) }
+  # Ensure we use fab! correctly for distinct users
+  fab!(:user_a, :user) { Fabricate(:user) }
+  fab!(:user_b, :user) { Fabricate(:user) }
 
   before do
-    group.add(user_1)
-    group.add(user_2)
+    GroupUser.delete_all
+    CategoryUser.delete_all
+    CategoryGroup.delete_all
+    GroupCategoryNotificationDefault.delete_all
+
+    # Ensure category is read_restricted so we use the group-based reach logic
+    category.update!(read_restricted: true)
+
+    group.add(user_a)
+    group.add(user_b)
     # Wichtig: Der Fetcher basiert auf CategoryGroup
     CategoryGroup.create!(category: category, group: group, permission_type: 1)
 
-    # user_1 beobachtet aktiv (Level 3)
-    CategoryUser.create!(user: user_1, category: category, notification_level: 3)
-    # user_2 hat keinen Eintrag -> nutzt Standard (Regular = 1)
+    # user_a beobachtet aktiv (Level 3)
+    CategoryUser.create!(user: user_a, category: category, notification_level: 3)
+    # user_b hat keinen Eintrag -> nutzt Standard (Regular = 1)
   end
 
   it "calculates correct notification level counts per group and total" do
-    result = described_class.call(category: category, guardian: Guardian.new(user_1))
+    result = described_class.call(category: category, guardian: Guardian.new(user_a))
 
     # 1. Test der Gruppen-Summen
     group_data = result.permissions.find { |g| g[:group_id] == group.id }
-    expect(group_data[:notification_levels][3]).to eq(1) # user_1
-    expect(group_data[:notification_levels][1]).to eq(1) # user_2 (default)
+    expect(group_data[:notification_levels][3]).to eq(1) # user_a
+    expect(group_data[:notification_levels][1]).to eq(1) # user_b (default)
 
     # 2. Test der Gesamt-Summen
     total_counts = result.category_notification_totals
-    expect(total_counts[3]).to eq(1) # user_1
-    # Note: regular count might be higher if there are other real users in the test env
-    expect(total_counts[1]).to be >= 1 # user_2
+    expect(total_counts[3]).to eq(1) # user_a
+    expect(total_counts[1]).to eq(1) # user_b
+  end
+
+  it "does not double-count users in total reach when they are in multiple groups" do
+    group_2 = Fabricate(:group, automatic: false)
+    group_2.add(user_a)
+    CategoryGroup.create!(category: category, group: group_2, permission_type: 1)
+
+    result = described_class.call(category: category, guardian: Guardian.new(user_a))
+
+    # Total reach should be exactly 2 (user_a and user_b), regardless of multiple group memberships
+    reach = result.category_notification_totals[:total_reach]
+    expect(reach).to eq(2)
+  end
+
+  it "uses the highest notification level when multiple levels apply via groups/overrides" do
+    group_2 = Fabricate(:group, automatic: false)
+    group_2.add(user_a)
+    CategoryGroup.create!(category: category, group: group_2, permission_type: 1)
+
+    # Set a group default level for group_2
+    GroupCategoryNotificationDefault.create!(
+      group: group_2,
+      category: category,
+      notification_level: NotificationLevels.all[:watching]
+    )
+
+    # user_a is already watching via CategoryUser override (3), so it stays 3.
+    result = described_class.call(category: category, guardian: Guardian.new(user_a))
+    total_counts = result.category_notification_totals
+    expect(total_counts[3]).to eq(1) # user_a still 1 in count 3
+  end
+
+  it "correctly identifies reach for public categories" do
+    # Create a public category
+    public_cat = Fabricate(:category, read_restricted: false)
+    
+    result = described_class.call(category: public_cat, guardian: Guardian.new(user_a))
+    reach = result.category_notification_totals[:total_reach]
+    
+    # In test environment, this counts all active non-staged users with id > 0
+    expected_count = User.where("id > 0").where(active: true, staged: false).count
+    expect(reach).to eq(expected_count)
+    expect(reach).to be >= 2 # At least user_a and user_b
   end
 end

@@ -28,10 +28,11 @@ This document summarizes technical insights, pitfalls, and useful information ga
 Discourse uses a multi-layered system for category notification levels:
 *   **Group Defaults (`GroupCategoryNotificationDefault`):** These define the baseline for all members of a specific group in a specific category.
 *   **User Overrides (`CategoryUser`):** These records store individual user choices. They **always** take precedence over group-based defaults.
-*   **Precedence & Aggregation:** To calculate "real" notification numbers, you must:
-    1.  Start with individual `CategoryUser` records.
-    2.  Layer group defaults for users who do not have an individual override.
-    3.  If a user is in multiple groups with different defaults, Discourse typically applies the **highest** notification level.
+*   **Precedence & Aggregation:** To calculate "real" notification numbers across the entire category ("Unique Reach"), we use a SQL Common Table Expression (CTE) approach:
+    1.  **Access Population**: Identify everyone who can see the category (via group memberships or public access).
+    2.  **Notification Inputs**: Gather all `CategoryUser` overrides and `GroupCategoryNotificationDefault` defaults for that population.
+    3.  **Deduplication**: Use `MAX(notification_level) GROUP BY user_id` to select exactly one "winning" level per active user.
+    4.  **Count**: Group the resulting unique users by their winning level. This prevents inflated numbers for users in multiple groups.
 *   **Levels:**
     *   `0`: Muted
     *   `1`: Regular (Normal)
