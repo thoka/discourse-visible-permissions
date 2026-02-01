@@ -107,10 +107,10 @@
       .permission-section {
         display: flex;
         align-items: center;
-        gap: 1.25em;
+        gap: 0.75em;
 
         .section-icon {
-          color: var(--primary-medium);
+          color: var(--primary);
           width: 1.5em;
           display: flex;
           justify-content: center;
@@ -134,12 +134,12 @@
               }
 
               .group-action-link {
-                opacity: 0.6 !important;
+                opacity: 0.8 !important;
               }
             }
 
             .group-action-link {
-              opacity: 0 !important; /* Hidden until group-item hover */
+              opacity: 1 !important; /* Hidden until group-item hover */
               
               &:hover {
                 opacity: 1 !important;

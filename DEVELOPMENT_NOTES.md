@@ -1,0 +1,31 @@
+# Development Notes: Discourse Visible Permissions
+
+This document summarizes technical insights, pitfalls, and useful information gathered during the development of this plugin.
+
+## 1. CSS and Assets
+*   **Asset Registration (Crucial):** Stylesheets located in `assets/stylesheets/` are **not** automatically loaded by Discourse. They must be explicitly registered in `plugin.rb` using `register_asset "stylesheets/file.scss"`. This was the primary reason styles didn't appear initially.
+*   **Specificity & Scope:** Discourse uses high-specificity styles for `.cooked` content in posts. While asset registration is the first required step, you may still need specific selectors (e.g., `.cooked .my-container a`) to override default link styles or theme-specific overrides.
+*   **Icons:** Every SVG icon used in the frontend via `iconHTML` must be registered in `plugin.rb` using `register_svg_icon "icon-name"`.
+
+## 2. Localization (I18n)
+*   **Automatic Groups:** Groups like `everyone`, `admins`, `moderators`, and `staff` are handled specially. Instead of technical slugs, use localized strings via Discourse translation keys (e.g., `groups.default_names.everyone`).
+*   **Placeholders:** When using placeholders (e.g., `category_name: "%{category_name}"`), ensure `I18n.t()` is called correctly in Javascript. HTML within placeholders should be pre-formatted or handled carefully to avoid XSS.
+
+## 3. Frontend Integration
+*   **Decorators:** `api.decorateCookedElement` is the reliable way to manipulate BBCode or CSS classes in posts. It ensures logic runs when posts are lazy-loaded or viewed in the composer preview.
+*   **Site Settings in JS:** Access site settings via `api.container.lookup("service:site-settings")`.
+*   **Ajax Requests:** Use the `ajax` module (`discourse/lib/ajax`) to ensure CSRF tokens and paths are handled correctly.
+
+## 4. Backend & Permissions
+*   **Guardian:** The `Guardian` class is central to permission checks. If you need to show data for categories a user cannot "see" (but could join), you must explicitly bypass or extend the logic in the controller (e.g., checking for `public_admission` of associated groups).
+*   **CategoryGroup Map:** The `CategoryGroup` table links categories to groups using `permission_type` (1=Full, 2=Create/Reply, 3=Read Only).
+
+## 5. Testing
+*   **System Specs:** Follow the Discourse development patterns for system tests.
+    *   **Sessions:** To test anonymous states, use `using_session` or ensure `sign_out` is handled properly before visiting pages.
+    *   **Assertions:** For AJAX-heavy UI, use `expect(page).to have_css()` as it includes built-in waiting logic.
+*   **Rake Tasks:** Rake tasks must be manually required in specs using `Rake.application.rake_require` because they are not auto-loaded in the test environment.
+
+## 6. Common Pitfalls
+*   **Server Restarts:** Changes to `plugin.rb` or any files in `config/` (like site settings or routes) **require** a full server restart to take effect.
+*   **Caching:** If styles don't appear after registration, a hard refresh (`Ctrl + F5`) or clearing `tmp/` might be necessary to force the asset compiler.
