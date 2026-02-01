@@ -1,6 +1,6 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
-import VisiblePermissionsSummary from "../components/visible-permissions-summary";
 import VisiblePermissionsTable from "../components/visible-permissions/table";
+import VisiblePermissionsSummary from "../components/visible-permissions-summary";
 
 export default {
   name: "discourse-visible-permissions",
@@ -11,7 +11,7 @@ export default {
       return;
     }
 
-    withPluginApi("1.34.0", (api) => {
+    withPluginApi((api) => {
       // Summary im Header vor dem "Thema erstellen" Button
       api.renderInOutlet("before-create-topic-button", VisiblePermissionsSummary);
       api.renderInOutlet("topic-footer-main-buttons-before-create", VisiblePermissionsSummary);
@@ -43,13 +43,10 @@ export default {
               // Wichtig für den Fallback in table.gjs
               placeholder.setAttribute("data-category-id", parsedId);
               placeholder.dataset.categoryId = parsedId;
-              
-              // add debugging log
-              console.log("Rendering VisiblePermissions for categoryId:", parsedId, "with view:", view);
 
               helper.renderGlimmer(placeholder, VisiblePermissionsTable, {
                 categoryId: parsedId,
-                view: view,
+                view,
               });
 
               placeholder.classList.remove("discourse-visible-permissions");

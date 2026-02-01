@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require "rails_helper"
+require File.expand_path("../../../../../spec/rails_helper", __dir__)
 
 describe DiscourseVisiblePermissions::PermissionsFetcher do
   fab!(:category)

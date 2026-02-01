@@ -1,9 +1,9 @@
+import { test } from "qunit";
 import {
   discourseModule,
   exists,
   query,
 } from "discourse/tests/helpers/qunit-helpers";
-import { test } from "qunit";
 import { renderRawPermissions } from "../initializers/discourse-visible-permissions"; // Wait, I need to export this or test via the initializer
 
 discourseModule("Unit | Initializers | discourse-visible-permissions", function (

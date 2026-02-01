@@ -1,6 +1,5 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
-import { fn } from "@ember/helper";
 import { action } from "@ember/object";
 import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import didUpdate from "@ember/render-modifiers/modifiers/did-update";
@@ -125,8 +124,6 @@ export default class VisiblePermissionsTable extends Component {
     this.error = false;
     try {
       const data = await ajax(`/c/${categoryId}/permissions.json`);
-      // dump nicely formatted to console
-      console.log("VisiblePermissionsTable Data:", JSON.stringify(data, null, 2));
       PERMISSIONS_CACHE.set(categoryId, data);
       this.data = data;
     } catch (e) {

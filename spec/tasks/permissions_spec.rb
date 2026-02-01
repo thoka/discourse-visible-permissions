@@ -4,7 +4,7 @@ require File.expand_path("../../../../spec/rails_helper", __dir__)
 require "rake"
 
 describe "discourse_visible_permissions rake tasks" do
-  fab!(:admin) { Fabricate(:admin) }
+  fab!(:admin)
 
   before do
     Rake.application.rake_require "tasks/permissions",

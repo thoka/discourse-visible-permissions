@@ -1,5 +1,5 @@
-import { acceptance, query } from "discourse/tests/helpers/qunit-helpers";
 import { test } from "qunit";
+import { acceptance, query } from "discourse/tests/helpers/qunit-helpers";
 import showPermissionsPretender from "../helpers/show-permissions-pretender";
 
 acceptance("Discourse Visible Permissions", function (needs) {

@@ -8,7 +8,7 @@ RSpec.describe DiscourseVisiblePermissions::PermissionsController do
   fab!(:group)
   fab!(:category)
   fab!(:user)
-  fab!(:user_in_group) { Fabricate(:user) }
+  fab!(:user_in_group, :user)
 
   before do
     SiteSetting.discourse_visible_permissions_enabled = true
