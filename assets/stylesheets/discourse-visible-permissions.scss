@@ -131,15 +131,26 @@
           &.group-name-cell {
             text-align: left;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .group-action-link {
+              color: var(--primary-low-mid);
+              font-size: 0.8em;
+              line-height: 1;
+              display: inline-flex;
+              align-items: center;
+
+              &:hover {
+                color: var(--tertiary);
+              }
+            }
           }
 
-          &.permission-cell {
+          &.permission-badge-cell {
             width: 40px;
-            color: var(--primary-medium);
-
-            .d-icon-square-check {
-              color: var(--success);
-            }
+            text-align: center;
           }
 
           &.actions-cell {
@@ -473,19 +484,8 @@
     width: 80px;
   }
 
-  .group-actions-cell,
-  .group-actions-header {
-    text-align: center;
-    width: 40px;
-
-    .group-action-link {
-      color: var(--primary-low-mid);
-      transition: color 0.2s;
-
-      &:hover {
-        color: var(--tertiary);
-      }
-    }
+  .access-level-header {
+    visibility: hidden;
   }
 
   .access-level-cell {

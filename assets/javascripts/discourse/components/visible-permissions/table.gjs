@@ -287,43 +287,70 @@ export default class VisiblePermissionsTable extends Component {
                   <th class="group-name-header">{{i18n
                       "js.discourse_visible_permissions.group_name"
                     }}</th>
-                  <th class="users-count-header">{{i18n
+                  <th
+                    class="users-count-header"
+                    title={{i18n
                       "js.discourse_visible_permissions.group_users_count"
-                    }}</th>
-                  <th class="access-level-header">{{i18n
-                      "js.discourse_visible_permissions.access_level"
-                    }}</th>
-                  <th class="group-actions-header"></th>
+                    }}
+                  >{{dIcon "users"}}</th>
                   <th class="permission-badge-header"></th>
                   <th class="notification-header default"></th>
-                  <th class="notification-header level-3" title={{this.getNotificationTitle 3}}>{{dIcon (this.getNotificationIcon 3)}}</th>
-                  <th class="notification-header level-4" title={{this.getNotificationTitle 4}}>{{dIcon (this.getNotificationIcon 4)}}</th>
-                  <th class="notification-header level-2" title={{this.getNotificationTitle 2}}>{{dIcon (this.getNotificationIcon 2)}}</th>
-                  <th class="notification-header level-0" title={{this.getNotificationTitle 0}}>{{dIcon (this.getNotificationIcon 0)}}</th>
+                  <th
+                    class="notification-header level-3"
+                    title={{this.getNotificationTitle 3}}
+                  >{{dIcon (this.getNotificationIcon 3)}}</th>
+                  <th
+                    class="notification-header level-4"
+                    title={{this.getNotificationTitle 4}}
+                  >{{dIcon (this.getNotificationIcon 4)}}</th>
+                  <th
+                    class="notification-header level-2"
+                    title={{this.getNotificationTitle 2}}
+                  >{{dIcon (this.getNotificationIcon 2)}}</th>
+                  <th
+                    class="notification-header level-0"
+                    title={{this.getNotificationTitle 0}}
+                  >{{dIcon (this.getNotificationIcon 0)}}</th>
                 </tr>
               </thead>
               <tbody>
                 {{#each this.processedPermissions as |perm|}}
-                  <tr class="group-row {{if perm.is_direct 'direct-permission' 'inherited-permission'}}">
+                  <tr
+                    class="group-row
+                      {{if
+                        perm.is_direct
+                        'direct-permission'
+                        'inherited-permission'
+                      }}"
+                  >
                     <td class="group-name-cell cell">
-                      <a href={{perm.group_url}} class="group-link">{{perm.group_display_name}}</a>
-                    </td>
-                    <td class="users-count-cell cell">
-                      {{perm.user_count}}
-                    </td>
-                    <td class="access-level-cell cell">
-                      {{perm.permission_label}}
-                    </td>
-                    <td class="group-actions-cell cell">
+                      <a
+                        href={{perm.group_url}}
+                        class="group-link"
+                      >{{perm.group_display_name}}</a>
+
                       {{#if perm.can_join}}
-                        <a href={{perm.group_url}} class="group-action-link join" title={{i18n "js.discourse_visible_permissions.join"}}>
+                        <a
+                          href={{perm.group_url}}
+                          class="group-action-link join"
+                          title={{i18n "js.discourse_visible_permissions.join"}}
+                        >
                           {{dIcon "plus"}}
                         </a>
                       {{else if perm.can_request}}
-                        <a href={{perm.group_url}} class="group-action-link request" title={{i18n "js.discourse_visible_permissions.request"}}>
+                        <a
+                          href={{perm.group_url}}
+                          class="group-action-link request"
+                          title={{i18n
+                            "js.discourse_visible_permissions.request"
+                          }}
+                        >
                           {{dIcon "paper-plane"}}
                         </a>
                       {{/if}}
+                    </td>
+                    <td class="users-count-cell cell">
+                      {{perm.user_count}}
                     </td>
                     <td
                       class="permission-badge-cell cell"
@@ -364,13 +391,21 @@ export default class VisiblePermissionsTable extends Component {
               </tbody>
               <tfoot>
                 <tr class="summary-row">
-                  <td class="group-name-cell cell" colspan="6">
+                  <td class="group-name-cell cell" colspan="4">
                     {{i18n "js.discourse_visible_permissions.total"}}
                   </td>
-                  <td class="notification-cell level-3 cell">{{this.getTotalCount 3}}</td>
-                  <td class="notification-cell level-4 cell">{{this.getTotalCount 4}}</td>
-                  <td class="notification-cell level-2 cell">{{this.getTotalCount 2}}</td>
-                  <td class="notification-cell level-0 cell">{{this.getTotalCount 0}}</td>
+                  <td
+                    class="notification-cell level-3 cell"
+                  >{{this.getTotalCount 3}}</td>
+                  <td
+                    class="notification-cell level-4 cell"
+                  >{{this.getTotalCount 4}}</td>
+                  <td
+                    class="notification-cell level-2 cell"
+                  >{{this.getTotalCount 2}}</td>
+                  <td
+                    class="notification-cell level-0 cell"
+                  >{{this.getTotalCount 0}}</td>
                 </tr>
               </tfoot>
             </table>

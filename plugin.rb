@@ -30,6 +30,7 @@ register_svg_icon "d-muted"
 register_svg_icon "d-regular"
 register_svg_icon "info-circle"
 register_svg_icon "cog"
+register_svg_icon "users"
 
 module ::DiscourseVisiblePermissions
   PLUGIN_NAME = "discourse-visible-permissions"
