@@ -34,7 +34,8 @@ module DiscourseVisiblePermissions
           group_notification_counts =
             calculate_group_notification_counts(all_group_ids, category.id)
 
-          group_user_counts = Group.where(id: all_group_ids).joins(:group_users).group(:group_id).count
+          group_user_counts =
+            Group.where(id: all_group_ids).joins(:group_users).group(:group_id).count
 
           group_data =
             groups.map do |group|
@@ -44,11 +45,16 @@ module DiscourseVisiblePermissions
                 end
               category_group = group.category_groups.find { |cg| cg.category_id == category.id }
 
-              user_count = if group.id == Group::AUTO_GROUPS[:everyone]
-                category.read_restricted? ? category_notification_totals[:total_reach] : User.real.count
-              else
-                group_user_counts[group.id] || 0
-              end
+              user_count =
+                if group.id == Group::AUTO_GROUPS[:everyone]
+                  if category.read_restricted?
+                    category_notification_totals[:total_reach]
+                  else
+                    User.real.count
+                  end
+                else
+                  group_user_counts[group.id] || 0
+                end
 
               {
                 group_id: group.id,
@@ -140,13 +146,13 @@ module DiscourseVisiblePermissions
       if category.read_restricted?
         # Only users in groups that have at least "See" permission
         allowed_group_ids = category.category_groups.pluck(:group_id)
-        if allowed_group_ids.empty?
-          return { total_reach: 0 }
-        end
-        user_ids_with_access_subquery = "SELECT gu.user_id FROM group_users gu WHERE gu.group_id IN (#{allowed_group_ids.join(",")})"
+        return { total_reach: 0 } if allowed_group_ids.empty?
+        user_ids_with_access_subquery =
+          "SELECT gu.user_id FROM group_users gu WHERE gu.group_id IN (#{allowed_group_ids.join(",")})"
       else
         # All real users
-        user_ids_with_access_subquery = "SELECT id as user_id FROM users WHERE id > 0 AND active AND NOT staged"
+        user_ids_with_access_subquery =
+          "SELECT id as user_id FROM users WHERE id > 0 AND active AND NOT staged"
       end
 
       # 2. Highest notification level for these users
@@ -182,10 +188,10 @@ module DiscourseVisiblePermissions
       SQL
 
       counts = Hash.new(0)
-      DB.query(sql, category_id: category.id, regular_level: NotificationLevels.all[:regular]).each do |row|
-        counts[row.final_level.to_i] = row.count.to_i
-      end
-      
+      DB
+        .query(sql, category_id: category.id, regular_level: NotificationLevels.all[:regular])
+        .each { |row| counts[row.final_level.to_i] = row.count.to_i }
+
       counts[:total_reach] = counts.values.sum
       counts
     end
