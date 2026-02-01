@@ -20,6 +20,11 @@ register_svg_icon "user-plus"
 register_svg_icon "paper-plane"
 register_svg_icon "bell"
 register_svg_icon "bell-slash"
+register_svg_icon "d-watching"
+register_svg_icon "d-tracking"
+register_svg_icon "d-watching-first"
+register_svg_icon "d-muted"
+register_svg_icon "d-regular"
 
 module ::DiscourseVisiblePermissions
   PLUGIN_NAME = "discourse-visible-permissions"

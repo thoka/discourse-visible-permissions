@@ -3,6 +3,57 @@ import { iconHTML } from "discourse/lib/icon-library";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { i18n } from "discourse-i18n";
 
+function getNotificationLevelsHtml(notificationLevels) {
+  const html = [];
+  // Levels in order: Watching(3), Watching First(4), Tracking(2), Muted(0)
+  [3, 4, 2, 0].forEach((lvl) => {
+    const count = notificationLevels[lvl] || 0;
+    if (count > 0) {
+      let icon, levelTitle, className;
+      if (lvl === 3) {
+        icon = iconHTML("d-watching");
+        levelTitle = i18n(
+          "discourse_visible_permissions.notification_levels.watching"
+        );
+        className = "level-watching";
+      } else if (lvl === 4) {
+        icon = iconHTML("d-watching-first");
+        levelTitle = i18n(
+          "discourse_visible_permissions.notification_levels.watching_first_post"
+        );
+        className = "level-watching-first";
+      } else if (lvl === 2) {
+        icon = iconHTML("d-tracking");
+        levelTitle = i18n(
+          "discourse_visible_permissions.notification_levels.tracking"
+        );
+        className = "level-tracking";
+      } else {
+        icon = iconHTML("d-muted");
+        levelTitle = i18n(
+          "discourse_visible_permissions.notification_levels.muted"
+        );
+        className = "level-muted";
+      }
+
+      const notifiedText = i18n(
+        "discourse_visible_permissions.notified_count",
+        {
+          count,
+        }
+      );
+
+      html.push(`
+          <span class="notification-level-item ${className}" title="${levelTitle}: ${notifiedText}">
+            <span class="notification-icon">${icon}</span>
+            <span class="notification-count">${count}</span>
+          </span>
+        `);
+    }
+  });
+  return html.join("");
+}
+
 function renderClassicView(node, data) {
   const wrapper = document.createElement("div");
   wrapper.classList.add("discourse-visible-permissions-container");
@@ -33,6 +84,7 @@ function renderClassicView(node, data) {
       <th class="permission-header" title="${i18n("category.permissions.see")}">${iconHTML("eye")}</th>
       <th class="permission-header" title="${i18n("category.permissions.reply")}">${iconHTML("reply")}</th>
       <th class="permission-header" title="${i18n("category.permissions.create")}">${iconHTML("plus")}</th>
+      <th class="notification-header"></th>
     </tr>
   `;
   table.appendChild(thead);
@@ -60,45 +112,6 @@ function renderClassicView(node, data) {
       );
     }
 
-    let notificationIcon, notificationTitle;
-    const level = perm.notification_level;
-    if (level === 0) {
-      notificationIcon = iconHTML("bell-slash");
-      notificationTitle = i18n(
-        "discourse_visible_permissions.notification_levels.muted"
-      );
-    } else if (level === 2) {
-      notificationIcon = iconHTML("bell");
-      notificationTitle = i18n(
-        "discourse_visible_permissions.notification_levels.tracking"
-      );
-    } else if (level === 3) {
-      notificationIcon = iconHTML("bell");
-      notificationTitle = i18n(
-        "discourse_visible_permissions.notification_levels.watching"
-      );
-    } else if (level === 4) {
-      notificationIcon = iconHTML("bell");
-      notificationTitle = i18n(
-        "discourse_visible_permissions.notification_levels.watching_first_post"
-      );
-    } else if (level === 1) {
-      notificationIcon = iconHTML("bell");
-      notificationTitle = i18n(
-        "discourse_visible_permissions.notification_levels.regular"
-      );
-    } else {
-      notificationIcon = "";
-      notificationTitle = "";
-    }
-
-    const notifiedCountTitle = i18n(
-      "discourse_visible_permissions.notified_count",
-      {
-        count: perm.notified_count,
-      }
-    );
-
     tr.innerHTML = `
       <td class="group-name-cell">
         ${
@@ -108,16 +121,42 @@ function renderClassicView(node, data) {
         }
       </td>
       <td class="actions-cell">${actionIcons.join("")}</td>
-      <td class="notification-cell" title="${notificationTitle}">
-        ${notificationIcon ? `<span class="notification-icon">${notificationIcon}</span>` : ""}
-        <span class="notified-count" title="${notifiedCountTitle}">${perm.notified_count}</span>
+      <td class="permission-cell" title="${i18n(
+        "category.permissions.see"
+      )}">${canSee ? iconHTML("square-check") : iconHTML("far-square")}</td>
+      <td class="permission-cell" title="${i18n(
+        "category.permissions.reply"
+      )}">${canReply ? iconHTML("square-check") : iconHTML("far-square")}</td>
+      <td class="permission-cell" title="${i18n(
+        "category.permissions.create"
+      )}">${canCreate ? iconHTML("square-check") : iconHTML("far-square")}</td>
+      <td class="notification-cell">
+        <div class="notification-levels-container">
+          ${getNotificationLevelsHtml(perm.notification_levels)}
+        </div>
       </td>
-      <td class="permission-cell" title="${i18n("category.permissions.see")}">${canSee ? iconHTML("square-check") : iconHTML("far-square")}</td>
-      <td class="permission-cell" title="${i18n("category.permissions.reply")}">${canReply ? iconHTML("square-check") : iconHTML("far-square")}</td>
-      <td class="permission-cell" title="${i18n("category.permissions.create")}">${canCreate ? iconHTML("square-check") : iconHTML("far-square")}</td>
     `;
     tbody.appendChild(tr);
   });
+
+  if (data.category_notification_totals) {
+    const summaryTr = document.createElement("tr");
+    summaryTr.classList.add("summary-row");
+    summaryTr.innerHTML = `
+      <td class="group-name-cell">${i18n("discourse_visible_permissions.total")}</td>
+      <td class="actions-cell"></td>
+      <td class="permission-cell"></td>
+      <td class="permission-cell"></td>
+      <td class="permission-cell"></td>
+      <td class="notification-cell">
+        <div class="notification-levels-container">
+          ${getNotificationLevelsHtml(data.category_notification_totals)}
+        </div>
+      </td>
+    `;
+    tbody.appendChild(summaryTr);
+  }
+
   table.appendChild(tbody);
 
   wrapper.appendChild(table);
@@ -165,60 +204,6 @@ function renderPermissionsTable(node, data, siteSettings) {
       );
     }
 
-    const notificationLevelsHtml = [];
-    // Levels in order: Watching(3), Watching First(4), Tracking(2), Regular(1), Muted(0)
-    [3, 4, 2, 1, 0].forEach((lvl) => {
-      const count = perm.notification_levels[lvl];
-      if (count > 0) {
-        let icon, levelTitle, className;
-        if (lvl === 3) {
-          icon = iconHTML("bell");
-          levelTitle = i18n(
-            "discourse_visible_permissions.notification_levels.watching"
-          );
-          className = "level-watching";
-        } else if (lvl === 4) {
-          icon = iconHTML("bell");
-          levelTitle = i18n(
-            "discourse_visible_permissions.notification_levels.watching_first_post"
-          );
-          className = "level-watching-first";
-        } else if (lvl === 2) {
-          icon = iconHTML("bell");
-          levelTitle = i18n(
-            "discourse_visible_permissions.notification_levels.tracking"
-          );
-          className = "level-tracking";
-        } else if (lvl === 1) {
-          icon = iconHTML("bell");
-          levelTitle = i18n(
-            "discourse_visible_permissions.notification_levels.regular"
-          );
-          className = "level-regular";
-        } else {
-          icon = iconHTML("bell-slash");
-          levelTitle = i18n(
-            "discourse_visible_permissions.notification_levels.muted"
-          );
-          className = "level-muted";
-        }
-
-        const notifiedText = i18n(
-          "discourse_visible_permissions.notified_count",
-          {
-            count,
-          }
-        );
-
-        notificationLevelsHtml.push(`
-          <span class="notification-level-item ${className}" title="${levelTitle}: ${notifiedText}">
-            <span class="notification-icon">${icon}</span>
-            <span class="notification-count">${count}</span>
-          </span>
-        `);
-      }
-    });
-
     let permIcon, permColor, permTitle;
     if (perm.permission_type === 1) {
       permIcon = iconHTML("plus");
@@ -248,11 +233,6 @@ function renderPermissionsTable(node, data, siteSettings) {
         }
       </td>
       <td class="actions-cell">${actionIcons.join("")}</td>
-      <td class="notification-cell">
-        <div class="notification-levels-container">
-          ${notificationLevelsHtml.join("")}
-        </div>
-      </td>
       <td class="permission-badge-cell">
         ${
           permIcon
@@ -262,9 +242,31 @@ function renderPermissionsTable(node, data, siteSettings) {
             : ""
         }
       </td>
+      <td class="notification-cell">
+        <div class="notification-levels-container">
+          ${getNotificationLevelsHtml(perm.notification_levels)}
+        </div>
+      </td>
     `;
     tbody.appendChild(tr);
   });
+
+  if (data.category_notification_totals) {
+    const summaryTr = document.createElement("tr");
+    summaryTr.classList.add("summary-row");
+    summaryTr.innerHTML = `
+      <td class="group-name-cell">${i18n("discourse_visible_permissions.total")}</td>
+      <td class="actions-cell"></td>
+      <td class="permission-badge-cell"></td>
+      <td class="notification-cell">
+        <div class="notification-levels-container">
+          ${getNotificationLevelsHtml(data.category_notification_totals)}
+        </div>
+      </td>
+    `;
+    tbody.appendChild(summaryTr);
+  }
+
   table.appendChild(tbody);
 
   wrapper.appendChild(table);

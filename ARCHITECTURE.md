@@ -11,13 +11,15 @@ This plugin provides a dynamic info box for category permissions, integrated via
    - `table` (Default): Modern hierarchical view showing highest permission only via color-coded badges.
    - `classic`: Full matrix view showing See/Reply/Create status checkboxes.
    - `short`: Iconic view grouping groups by their maximum permission level.
+6. **Notification Summary**: Displays an aggregate row (Total) at the bottom of the table showing the actual subscription levels of all users in the category.
 
 ## Key Components
 - **BBCode**: Handled via `lib/discourse_markdown/discourse-visible-permissions.rb`.
 - **Backend API**: Rails Engine routing in `config/routes.rb`.
-- **Permissions Service**: `app/services/discourse_visible_permissions/permissions_fetcher.rb`.
+- **Permissions & Notifications Service**: `app/services/discourse_visible_permissions/permissions_fetcher.rb`.
 - **Styling**: `assets/stylesheets/discourse-visible-permissions.scss` (supports configurable colors via site settings).
 
 ## Data Model Reliance
 - **CategoryGroup**: Primary source for mapping `category_id` -> `group_id` -> `permission_type` (1:Full, 2:Create/Reply, 3:Read).
-- **Group Settings**: Checks `public_admission` and `allow_membership_requests`.
+- **GroupCategoryNotificationDefault**: Baseline notification levels for groups.
+- **CategoryUser**: Individual user overrides for category notification levels.

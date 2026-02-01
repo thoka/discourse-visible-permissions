@@ -12,6 +12,7 @@ de:
       table_title: "Berechtigungen im Bereich „%{category_name}“"
       join: "Gruppe beitreten"
       request: "Mitgliedschaft anfragen"
+      total: "Gesamt"
       notified_count: "%{count} Nutzer werden benachrichtigt"
       notification_levels:
         muted: "Stummgeschaltet"

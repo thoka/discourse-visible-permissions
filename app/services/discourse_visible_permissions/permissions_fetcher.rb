@@ -78,6 +78,30 @@ module DiscourseVisiblePermissions
       permissions.sort_by! { |p| [p[:permission_type], p[:group_display_name] || ""] }
 
       context[:permissions] = permissions
+      context[:category_notification_totals] = calculate_category_notification_totals(category)
+    end
+
+    def calculate_category_notification_totals(category)
+      user_levels = {}
+
+      # 1. CategoryUser overrides
+      CategoryUser
+        .where(category: category)
+        .pluck(:user_id, :notification_level)
+        .each { |uid, lvl| user_levels[uid] = lvl }
+
+      # 2. Group defaults
+      # Sort by level DESC so we pick the highest level for users in multiple groups
+      GroupCategoryNotificationDefault
+        .where(category: category)
+        .order(notification_level: :desc)
+        .each do |gd|
+          gd.group.users.pluck(:id).each { |uid| user_levels[uid] ||= gd.notification_level }
+        end
+
+      counts = Hash.new(0)
+      user_levels.each_value { |lvl| counts[lvl] += 1 }
+      counts
     end
 
     def calculate_notification_levels(group, category, notification_default)

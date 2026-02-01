@@ -11,6 +11,8 @@ This plugin enables an infobox about configured permissions (who is allowed to c
   - `paper-plane` icon: Request membership for groups that allow it.
 - **Configurable Colors**: Admin-defined colors for permission level badges (Create, Reply, See).
 - **Interactive Links**: Group names link to group pages, and the category name in the title links to the category page.
+- **Detailed Notification Tracking**: Displays specific subscription counts (Watching, Tracking, Muted) using official Discourse icons.
+- **Aggregate Summary Row**: Shows total actual user subscriptions for the entire category at the bottom of the table.
 - **Localization**: Full support for German and English, including localized automatic group names (e.g., "jeder", "Team").
 - **Automatic Detection**: Using `[show-permissions]` without a category ID inside a topic automatically detects the category from the topic.
 

@@ -37,6 +37,7 @@ module DiscourseVisiblePermissions
                category_name: category.name,
                category_url: category.url,
                group_permissions: result.permissions,
+               category_notification_totals: result.category_notification_totals,
              }
     end
   end
