@@ -377,6 +377,13 @@
     margin: 0;
     border: none;
   }
+
+  .modal-body {
+    // Das Wrapper-Div mit der data-category-id soll kein Layout beeinflussen
+    div[data-category-id] {
+      display: contents;
+    }
+  }
 }
 
 /* Summary Styles */

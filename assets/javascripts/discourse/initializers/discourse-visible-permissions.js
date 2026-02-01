@@ -35,9 +35,13 @@ export default {
             if (categoryId) {
               const parsedId = parseInt(categoryId, 10);
               
+              // Wichtig für den Fallback in table.gjs
               placeholder.setAttribute("data-category-id", parsedId);
-              placeholder.setAttribute("data-view", view);
+              placeholder.dataset.categoryId = parsedId;
               
+              // add debugging log
+              console.log("Rendering VisiblePermissions for categoryId:", parsedId, "with view:", view);
+
               helper.renderGlimmer(placeholder, VisiblePermissionsTable, {
                 categoryId: parsedId,
                 view: view,

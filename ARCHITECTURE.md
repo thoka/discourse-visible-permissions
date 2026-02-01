@@ -36,3 +36,7 @@ When using `api.decorateCookedElement` with `helper.renderGlimmer`, arguments pa
 
 ### SVG Icons
 Icons used in GJS templates (via `dIcon` helper) must be explicitly registered in `plugin.rb` using `register_svg_icon`, otherwise they will not be included in the client-side SVG subset.
+
+### Important: Decorator vs. Glimmer Component Life-cycle
+1. **Method Binding**: In `.gjs` components, ensure all methods called from the template (like `getTotalCount`) use the `@action` decorator to maintain `this` context, especially when used inside nested loops or conditionals.
+2. **Defensive Programming**: Components rendered via BBCode might be initialized multiple times or before data is ready. Always use optional chaining (`this.data?.property`) in helper methods used by the template.

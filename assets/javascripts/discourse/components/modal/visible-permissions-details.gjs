@@ -9,26 +9,28 @@ export default class VisiblePermissionsDetails extends Component {
   }
 
   get categoryId() {
-    return this.args.model.categoryId;
+    return this.args.model.categoryId || this.data?.category_id;
   }
 
-  get tableTitle() {
-    return i18n("discourse_visible_permissions.table_title", {
-      category_name: this.data.category_name,
+  get modalTitle() {
+    return i18n("js.discourse_visible_permissions.table_title", {
+      category_name: this.data?.category_name || "",
     });
   }
 
   <template>
     <DModal
-      @title={{i18n "discourse_visible_permissions.modal_title"}}
+      @title={{this.modalTitle}}
       @closeModal={{@closeModal}}
       class="visible-permissions-details-modal"
     >
       <:body>
-        <VisiblePermissionsTable
-          @data={{@model.permissions}}
-          @categoryId={{@model.categoryId}}
-        />
+        <div data-category-id={{this.categoryId}}>
+          <VisiblePermissionsTable
+            @data={{this.data}}
+            @categoryId={{this.categoryId}}
+          />
+        </div>
       </:body>
     </DModal>
   </template>

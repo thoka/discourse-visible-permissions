@@ -19,14 +19,33 @@ export default class VisiblePermissionsTable extends Component {
   @tracked data = null;
   @tracked loading = false;
   @tracked error = false;
+  @tracked _element = null;
 
   _lastCategoryId = null;
 
-  constructor(owner, args) {
-    super(owner, args);
+  constructor(...args) {
+    super(...args);
+
+    /*
+    console.log("this.args:", JSON.stringify(this.args));
+    console.log("this.model:", this.model);
+    console.log("this.data:", this.data);
+    console.log("this keys:", Object.keys(this));
+    console.log("args keys:", Object.keys(this.args || {}));
+    // Auch: Was ist das zweite Argument direkt?
+    console.log("raw args[1]:", args[1]);
+  
+    console.log("VisiblePermissionsTable args:", this.args.data);
+    console.log("VisiblePermissionsTable categoryId:", this.args.data.categoryId);
+    console.log("VisiblePermissionsTable instance:", this);
+    */
+
+    // Bindet Methoden explizit, falls der Dekorator allein nicht ausreicht
+    this.getTotalCount = this.getTotalCount.bind(this);
 
     if (this.args.data) {
-      this.data = this.args.data;
+      this.data = this.args.data; // ToDo: Fix this workaround
+      this.args = this.args.data; // ToDo: Fix this workaround
     }
   }
 
@@ -57,22 +76,48 @@ export default class VisiblePermissionsTable extends Component {
 
   @action
   async fetchData(element) {
+    if (element instanceof HTMLElement) {
+      this._element = element;
+    }
+
+    const currentElement =
+      element instanceof HTMLElement ? element : this._element;
+
     if (this.loading) {
       return;
     }
 
-    let categoryId = this.args.categoryId;
-
-    if (!categoryId && element) {
-      const container =
-        element.closest(".discourse-visible-permissions-rendered") ||
-        element.closest(".discourse-visible-permissions");
-      if (container?.dataset?.categoryId) {
-        categoryId = parseInt(container.dataset.categoryId, 10);
-      }
+    // Modal/Direct Data Kontext
+    if (this.args.data && Object.keys(this.args.data).length > 0) {
+      this.data = this.args.data;
+      return;
     }
 
-    if (!categoryId && !this.args.data) {
+    let rawId = this.args.categoryId;
+
+    const isValidId = (id) => {
+      const parsed = parseInt(id, 10);
+      return !isNaN(parsed) && parsed > 0;
+    };
+
+    // DOM Fallback: Suche nach dem Attribut im nächsten Eltern-Element
+    if (!isValidId(rawId) && currentElement) {
+      const container = currentElement.closest("[data-category-id]");
+      rawId = container?.dataset?.categoryId;
+    }
+
+    const categoryId = parseInt(rawId, 10);
+
+    if (isNaN(categoryId) || categoryId <= 0) {
+      // ToDo: Log error
+      return;
+    }
+
+    if (
+      PERMISSIONS_CACHE.has(categoryId) &&
+      this._lastCategoryId === categoryId
+    ) {
+      this.data = PERMISSIONS_CACHE.get(categoryId);
       return;
     }
 
@@ -80,6 +125,8 @@ export default class VisiblePermissionsTable extends Component {
     this.error = false;
     try {
       const data = await ajax(`/c/${categoryId}/permissions.json`);
+      // dump nicely formatted to console
+      console.log("VisiblePermissionsTable Data:", JSON.stringify(data, null, 2));
       PERMISSIONS_CACHE.set(categoryId, data);
       this.data = data;
     } catch (e) {
@@ -89,6 +136,7 @@ export default class VisiblePermissionsTable extends Component {
       this.error = true;
     } finally {
       this.loading = false;
+      this._lastCategoryId = categoryId;
     }
   }
 
@@ -182,7 +230,7 @@ export default class VisiblePermissionsTable extends Component {
   }
 
   getCount(perm, lvl) {
-    const counts = perm.notification_level_counts;
+    const counts = perm.notification_levels;
     if (!counts) {
       return "";
     }
@@ -190,13 +238,12 @@ export default class VisiblePermissionsTable extends Component {
     return count > 0 ? count : "";
   }
 
-  getTotalCount(lvl) {
-    const counts = this.data?.category_notification_totals;
-    if (!counts) {
-      return "?";
+  getTotalCount(level) {
+    // Defensiver Check verhindert Crash wenn 'this' oder 'data' fehlt
+    if (!this?.data?.category_notification_totals) {
+      return -1;
     }
-    const count = counts[lvl] || 0;
-    return count > 0 ? count : "";
+    return this.data.category_notification_totals[level] || "";
   }
 
   <template>
@@ -204,7 +251,7 @@ export default class VisiblePermissionsTable extends Component {
       <div
         class="discourse-visible-permissions-container view-{{this.viewType}}"
         {{didInsert this.fetchData}}
-        {{didUpdate (fn this.fetchData null) @categoryId}}
+        {{didUpdate this.fetchData @categoryId}}
       >
         {{#if this.loading}}
           <div class="loading-placeholder">{{i18n
